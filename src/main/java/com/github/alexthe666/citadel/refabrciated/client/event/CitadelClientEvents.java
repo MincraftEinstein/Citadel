@@ -79,4 +79,53 @@ public interface CitadelClientEvents {
             void event(EventRenderSplashText.Post event);
         }
     }
+
+    interface LivingRendererEvents {
+        Event<LivingRendererEvents.SetupRotations> SETUP_ROTATIONS = EventFactory.createArrayBacked(LivingRendererEvents.SetupRotations.class, callbacks -> event -> {
+            for (var callback : callbacks) {
+                callback.event(event);
+            }
+        });
+
+        @FunctionalInterface
+        interface SetupRotations {
+            void event(EventLivingRenderer.SetupRotations event);
+        }
+
+        interface AccessToBufferSourceEvents {
+            Event<AccessToBufferSourceEvents.PreSetupAnimations> PRE_ANIM = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PreSetupAnimations.class, callbacks -> event -> {
+                for (var callback : callbacks) {
+                    callback.event(event);
+                }
+            });
+
+            @FunctionalInterface
+            interface PreSetupAnimations {
+                void event(EventLivingRenderer.PreSetupAnimations event);
+            }
+
+            Event<AccessToBufferSourceEvents.PostSetupAnimations> POST_ANIM = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PostSetupAnimations.class, callbacks -> event -> {
+                for (var callback : callbacks) {
+                    callback.event(event);
+                }
+            });
+
+            @FunctionalInterface
+            interface PostSetupAnimations {
+                void event(EventLivingRenderer.PostSetupAnimations event);
+            }
+
+            Event<AccessToBufferSourceEvents.PostRenderModel> POST_RENDER_MODEL = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PostRenderModel.class, callbacks -> event -> {
+                for (var callback : callbacks) {
+                    callback.event(event);
+                }
+            });
+
+            @FunctionalInterface
+            interface PostRenderModel {
+                void event(EventLivingRenderer.PostRenderModel event);
+            }
+
+        }
+    }
 }
