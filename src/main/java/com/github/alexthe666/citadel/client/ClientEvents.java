@@ -1,14 +1,17 @@
 package com.github.alexthe666.citadel.client;
 
-// TODO ender
-//@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-//public class ClientEvents {
-//    @SubscribeEvent
-//    public static void registerShaders(final RegisterShadersEvent e) {
-//        try {
-//            e.registerShader(new ShaderInstance(e.getResourceProvider(), ResourceLocation.parse("citadel:rendertype_rainbow_aura"), DefaultVertexFormat.POSITION_TEX_COLOR), CitadelInternalShaders::setRenderTypeRainbowAura);
-//        } catch (Exception exception) {
-//            exception.printStackTrace();
-//        }
-//    }
-//}
+import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.client.shader.CitadelInternalShaders;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
+import net.minecraft.resources.ResourceLocation;
+
+public class ClientEvents {
+    public static void registerShaders(CoreShaderRegistrationCallback.RegistrationContext e) {
+        try {
+            e.register(ResourceLocation.parse("citadel:rendertype_rainbow_aura"), DefaultVertexFormat.POSITION_TEX_COLOR, CitadelInternalShaders::setRenderTypeRainbowAura);
+        } catch (Exception exception) {
+            Citadel.LOGGER.error(e);
+        }
+    }
+}

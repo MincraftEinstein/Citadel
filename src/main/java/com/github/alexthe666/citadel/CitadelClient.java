@@ -1,15 +1,18 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.client.ClientEvents;
 import com.github.alexthe666.citadel.refabrciated.client.ClientExtensionsManager;
 import com.github.alexthe666.citadel.server.message.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 
 public class CitadelClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
         Citadel.PROXY.onClientInit();
+        CoreShaderRegistrationCallback.EVENT.register(ClientEvents::registerShaders);
         ClientExtensionsManager.earlyInit();
         registerClientReceivers();
     }
