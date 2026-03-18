@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.config.ConfigHolder;
+import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
 import com.github.alexthe666.citadel.item.ItemCitadelDebug;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
@@ -10,6 +12,8 @@ import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
 import com.github.alexthe666.citadel.web.WebHelper;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,7 +72,6 @@ public class Citadel implements ModInitializer {
 //        if (FMLEnvironment.dist.isClient()) {
 //            NeoForge.EVENT_BUS.register(PROXY);
 //        }
-//        modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
 //        NeoForge.EVENT_BUS.register(new CitadelEvents());
 //        // Register NeoForge bus events (non-mod lifecycle events)
 //        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
@@ -75,6 +79,8 @@ public class Citadel implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        NeoForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
+        NeoForgeModConfigEvents.reloading(MOD_ID).register(Citadel::onModConfigEvent);
         CitadelEvents.init();
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             VillageHouseManager.addAllHouses(server.registryAccess());
@@ -89,27 +95,23 @@ public class Citadel implements ModInitializer {
                     PATREONS.add(line);
                 }
                 return;
-            }
-            catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
 
         LOGGER.warn("Failed to load patreon contributor perks");
     }
 
-    // TODO when fzzy
-//    @SubscribeEvent
-//    public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
-//        final ModConfig config = event.getConfig();
-//        // Rebake the configs when they change
-//        ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
-//        if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
-//            ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
-//            ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
-//            ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
-//            //citadelTestBiomeData = SpawnBiomeConfig.create(ResourceLocation.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
-//        }
-//    }
+    public static void onModConfigEvent(ModConfig config) {
+        // Rebake the configs when they change
+        ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
+        if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
+            ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
+            ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
+            ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
+            //citadelTestBiomeData = SpawnBiomeConfig.create(ResourceLocation.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
+        }
+    }
 
     // TODO ender
 //    @SubscribeEvent
