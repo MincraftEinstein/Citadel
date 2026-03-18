@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -1490,8 +1491,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
      * @return true if the block is a ladder.
      */
     protected boolean isLadder(final Block block, final BlockPos pos) {
-        // TODO ender
-        return false;//block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
+        return world.getBlockState(pos).is(BlockTags.CLIMBABLE);
     }
 
     protected boolean isLadder(final BlockPos pos) {
