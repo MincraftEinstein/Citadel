@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -537,8 +538,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
 
             final BlockPos pos = new BlockPos(pEx.x, pEx.y, pEx.z);
-                                                                                                    // TODO ender
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) /*&& level.getBlockState(pos).isLadder(level, pos, ourEntity)*/) {
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && level.getBlockState(pos).is(BlockTags.CLIMBABLE)) {
                 return handlePathPointOnLadder(pEx);
             } else if (ourEntity.isInWater()) {
                 return handleEntityInWater(oldIndex, pEx);
@@ -647,8 +647,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             }
             else
             {
-                // TODO ender
-                if (false/*level.getBlockState(entityPos.below()).isLadder(level, entityPos.below(), ourEntity)*/) {
+                if (level.getBlockState(entityPos.below()).is(BlockTags.CLIMBABLE)) {
                     this.ourEntity.setYya(-0.5f);
                 } else {
                     return false;
