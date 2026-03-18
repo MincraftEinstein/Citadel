@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.refabrciated.client.event;
 
+import com.github.alexthe666.citadel.client.event.EventGetFluidRenderType;
 import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
 import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
@@ -32,6 +33,7 @@ public interface CitadelClientEvents {
     interface PosePlayerHand {
         void event(EventPosePlayerHand event);
     }
+
     Event<GetOutlineColor> OUTLINE_COLOR = EventFactory.createArrayBacked(GetOutlineColor.class, callbacks -> event -> {
         for (var callback : callbacks) {
             callback.event(event);
@@ -42,5 +44,17 @@ public interface CitadelClientEvents {
     @FunctionalInterface
     interface GetOutlineColor {
         void event(EventGetOutlineColor event);
+    }
+
+    Event<GetFluidRenderType> FLUID_RENDER_TYPE = EventFactory.createArrayBacked(GetFluidRenderType.class, callbacks -> event -> {
+        for (var callback : callbacks) {
+            callback.event(event);
+            if (event.getResult() == TriState.TRUE) return;
+        }
+    });
+
+    @FunctionalInterface
+    interface GetFluidRenderType {
+        void event(EventGetFluidRenderType event);
     }
 }
