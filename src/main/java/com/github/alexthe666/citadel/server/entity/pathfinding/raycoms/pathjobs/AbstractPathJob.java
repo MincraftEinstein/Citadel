@@ -25,6 +25,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -1345,8 +1346,10 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
                 // TODO (this is an alex todo): I'd be cool if dragons could squash multiple snow layers when walking over them
                 if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.125 && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1)) {
-                                            // TODO ender
-                    final PathType pathType = null;//block.getBlockPathType(world, pos, null);
+                    PathType pathType = null;
+                    if (entity.get() instanceof Mob mob) {
+                        pathType = WalkNodeEvaluator.getPathTypeStatic(mob, pos);
+                    }
                     return pathType == null;
                 }
                 return false;
