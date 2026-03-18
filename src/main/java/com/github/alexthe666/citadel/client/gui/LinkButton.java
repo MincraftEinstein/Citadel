@@ -31,8 +31,7 @@ public class LinkButton extends Button {
         this(book, x, y, width, height, component, ItemStack.EMPTY, onPress);
     }
 
-    // TODO this is supposed to override a neo only method in AbstractWidget
-//    @Override
+    // WONT-FIX: this is used only in neo custom classes and we don't need to support stuff that's not real
     public int getFGColor() {
         return this.isHovered ? book.getWidgetColor() : this.active ? 0X94745A : 10526880;
     }
