@@ -72,13 +72,6 @@ public class Citadel implements ModInitializer {
 //        final DeferredRegister<MapCodec<? extends BiomeModifier>> serializers = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, "citadel");
 //        serializers.register(bus);
 //        serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
-//        // Only register ClientProxy to event bus - ServerProxy has no @SubscribeEvent methods
-//        if (FMLEnvironment.dist.isClient()) {
-//            NeoForge.EVENT_BUS.register(PROXY);
-//        }
-//        NeoForge.EVENT_BUS.register(new CitadelEvents());
-//        // Register NeoForge bus events (non-mod lifecycle events)
-//        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
 //    }
 
     @Override
