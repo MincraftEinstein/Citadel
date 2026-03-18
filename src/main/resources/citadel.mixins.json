@@ -12,7 +12,8 @@
     "MinecraftServerMixin",
     "NoiseGeneratorSettingsMixin",
     "ServerLevelMixin",
-    "SmithingMenuMixin"
+    "SmithingMenuMixin",
+    "refabricated.ItemRendererAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -22,7 +23,9 @@
     "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
-    "client.SplashRendererMixin"
+    "client.SplashRendererMixin",
+    "refabricated.BlockEntityWithoutLevelRendererMixin",
+    "refabricated.ItemRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

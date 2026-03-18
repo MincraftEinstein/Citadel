@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
+import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
 import com.github.alexthe666.citadel.client.game.Tetris;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
@@ -306,8 +307,7 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public Object getISTERProperties() {
-        // TODO ender
-        return null;//new CitadelItemRenderProperties();
+        return new CitadelItemRenderProperties();
     }
 
     @Override

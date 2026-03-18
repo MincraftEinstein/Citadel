@@ -22,9 +22,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
@@ -46,30 +44,28 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             Random random = new Random();
             boolean animateAnyways = false;
 
-            // TODO ender
-            CustomRenderDisplay display = CustomRenderDisplay.DEFAULT;//stack.getOrDefault(Citadel.CUSTOM_RENDER_DISPLAY, CustomRenderDisplay.DEFAULT);
+            CustomRenderDisplay display = stack.getOrDefault(Citadel.CUSTOM_RENDER_DISPLAY.get(), CustomRenderDisplay.DEFAULT);
 
-            // TODO ender
-//            if (!stack.has(Citadel.CUSTOM_RENDER_DISPLAY)) {
-//                animateAnyways = true;
-//            }
+            if (!stack.has(Citadel.CUSTOM_RENDER_DISPLAY.get())) {
+                animateAnyways = true;
+            }
 
             poseStack.pushPose();
             poseStack.translate(0.5F, 0.5f, 0.5f);
-            if(display.shake()) {
+            if (display.shake()) {
                 poseStack.translate((random.nextFloat() - 0.5F) * 0.1F, (random.nextFloat() - 0.5F) * 0.1F, (random.nextFloat() - 0.5F) * 0.1F);
             }
-            if(animateAnyways || display.bob()){
+            if (animateAnyways || display.bob()) {
                 poseStack.translate(0, 0.05F + 0.1F * Mth.sin(0.3F * ticksExisted), 0);
             }
-            if(display.spin()){
+            if (display.spin()) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(6 * ticksExisted));
             }
-            if(animateAnyways || display.zoom()) {
+            if (animateAnyways || display.zoom()) {
                 float scale = (float) (1F + 0.15F * (Math.sin(ticksExisted * 0.3F) + 1F));
                 poseStack.scale(scale, scale, scale);
             }
-            if(display.scale() != 1.0F){
+            if (display.scale() != 1.0F) {
                 float scale = display.scale();
                 poseStack.scale(scale, scale, scale);
             }
@@ -84,26 +80,24 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             RenderSystem.enableDepthTest();
             Holder<MobEffect> effect;
 
-            // TODO ender
-//            if (stack.has(Citadel.DISPLAY_EFFECT)) {
-//                effect = BuiltInRegistries.MOB_EFFECT.getHolderOrThrow(stack.get(Citadel.DISPLAY_EFFECT));
-//            } else {
-//                if (mobEffectList == null) {
-//                    mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
-//                }
-//                int size = mobEffectList.size();
-//                int time = (int) (Util.getMillis() / 500);
-//                effect = mobEffectList.get(time % size);
-//                if (effect == null) {
-//                    effect = MobEffects.MOVEMENT_SPEED.getDelegate();
-//                }
-//            }
+            if (stack.has(Citadel.DISPLAY_EFFECT.get())) {
+                effect = BuiltInRegistries.MOB_EFFECT.getHolderOrThrow(stack.get(Citadel.DISPLAY_EFFECT.get()));
+            } else {
+                if (mobEffectList == null) {
+                    mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
+                }
+                int size = mobEffectList.size();
+                int time = (int) (Util.getMillis() / 500);
+                effect = mobEffectList.get(time % size);
+                if (effect == null) {
+                    effect = MobEffects.MOVEMENT_SPEED;
+                }
+            }
 
             MobEffectTextureManager potionspriteuploader = Minecraft.getInstance().getMobEffectTextures();
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
-            // TODO ender
-            TextureAtlasSprite sprite = null;//potionspriteuploader.get(effect);
+            TextureAtlasSprite sprite = potionspriteuploader.get(effect);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, sprite.atlasLocation());
@@ -118,8 +112,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         }
         if (stack.getItem() == Citadel.ICON_ITEM.get()) {
-            // TODO ender
-            ResourceLocation texture = DEFAULT_ICON_TEXTURE;//stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
+            ResourceLocation texture = stack.getOrDefault(Citadel.ICON_LOCATION.get(), DEFAULT_ICON_TEXTURE);
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
