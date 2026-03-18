@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.animation;
 
 import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.event.AnimationEvents;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.ArrayUtils;
@@ -40,14 +41,15 @@ public enum AnimationHandler {
         } else {
             if (entity.getAnimation() != IAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
-//                    AnimationEvent.Start event = new AnimationEvent.Start<>(entity, entity.getAnimation());
-//                    if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
-//                        this.sendAnimationMessage(entity, event.getAnimation());
-//                    }
+                    AnimationEvent.Start<T> event = new AnimationEvent.Start<>(entity, entity.getAnimation());
+                    AnimationEvents.START.invoker().event(event);
+                    if (!event.isCanceled()) {
+                        this.sendAnimationMessage(entity, event.getAnimation());
+                    }
                 }
                 if (entity.getAnimationTick() < entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(entity.getAnimationTick() + 1);
-//                    NeoForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
+                    AnimationEvents.TICK.invoker().event(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(0);
