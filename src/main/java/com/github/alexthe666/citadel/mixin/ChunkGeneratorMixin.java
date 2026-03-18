@@ -1,6 +1,9 @@
 package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.CitadelConstants;
+import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
+import com.github.alexthe666.citadel.server.event.EventMergeStructureSpawns;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.random.WeightedRandomList;
@@ -21,12 +24,9 @@ public class ChunkGeneratorMixin {
     private void citadel_getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory mobCategory, BlockPos pos, CallbackInfoReturnable<WeightedRandomList<MobSpawnSettings.SpawnerData>> cir) {
         WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns = biome.value().getMobSettings().getMobs(mobCategory);
         if (biomeSpawns != cir.getReturnValue()) {
-            // TODO ender
-//            EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
-//            NeoForge.EVENT_BUS.post(event);
-//            if (event.getResult() == TriState.TRUE) {
-//                cir.setReturnValue(event.getStructureSpawns());
-//            }
+            EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
+            CitadelCommonEvents.MERGE_STRUCTURE_SPAWNS.invoker().event(event);
+            if (event.getResult() == TriState.TRUE) cir.setReturnValue(event.getStructureSpawns());
         }
     }
 
