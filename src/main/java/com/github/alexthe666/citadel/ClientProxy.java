@@ -15,6 +15,7 @@ import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
+import com.github.alexthe666.citadel.mixin.refabricated.ScreenAccessor;
 import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
@@ -86,7 +87,6 @@ public class ClientProxy extends ServerProxy {
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> clientTick());
     }
 
-    // TODO
     public void screenOpen(Minecraft minecraft, Screen screen) {
         if (screen instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
             try {
@@ -95,12 +95,12 @@ public class ClientProxy extends ServerProxy {
                 Options options = minecraft.options;
                 if (Citadel.PATREONS.contains(username)) {
                     Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(screen, options))).size(200, 20).pos(screen.width / 2 - 100, screen.height / 6 + 150 + height).build();
-//                    event.addListener(button1);
+                    ((ScreenAccessor) screen).citadel_addRenderableWidget(button1);
                     height += 25;
                 }
                 if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
                     Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(screen, options))).size(200, 20).pos(screen.width / 2 - 100, screen.height / 6 + 150 + height).build();
-//                    event.addListener(button2);
+                    ((ScreenAccessor) screen).citadel_addRenderableWidget(button2);
                     height += 25;
                 }
             } catch (Exception e) {

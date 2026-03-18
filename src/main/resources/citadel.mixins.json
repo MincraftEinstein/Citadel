@@ -11,6 +11,7 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "NoiseGeneratorSettingsMixin",
+    "refabricated.ScreenAccessor",
     "ServerLevelMixin",
     "SmithingMenuMixin",
     "refabricated.ItemRendererAccessor"
