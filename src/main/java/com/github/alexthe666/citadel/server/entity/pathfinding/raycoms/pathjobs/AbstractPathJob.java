@@ -4,11 +4,15 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs
  */
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.*;
+import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
+import com.github.alexthe666.citadel.server.message.SyncePathMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -291,8 +295,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet()) {
             if (entry.getValue().equals(mob.getUUID())) {
-                // TODO ender
-//                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
+                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
             }
         }
     }
@@ -455,8 +458,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
                 iter.remove();
             }
             else if (entry.getValue().equals(mob.getUUID())) {
-                // TODO ender
-//                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
+                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
             }
         }
     }

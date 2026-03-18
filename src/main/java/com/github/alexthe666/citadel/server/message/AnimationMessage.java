@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -32,8 +33,7 @@ public class AnimationMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    // TODO ender. might not be needed
-//    public static void handle(final AnimationMessage message, IPayloadContext context) {
-//        context.enqueueWork(() -> Citadel.PROXY.handleAnimationPacket(message.entityID, message.index));
-//    }
+    public static void handle(final AnimationMessage message) {
+         Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
+    }
 }

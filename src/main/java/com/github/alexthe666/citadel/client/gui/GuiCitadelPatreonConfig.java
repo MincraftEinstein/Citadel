@@ -1,7 +1,9 @@
 package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
+import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -54,8 +56,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             //heightSlider.isHovered = false;
         }
         CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-        // TODO ender
-//        PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+        PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
     }
 
     public static float roundTo(float value, int places) {
@@ -112,8 +113,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
             tag.putString("CitadelFollowerType", followType);
             CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-            // TODO ender
-//            PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+            PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
             changeButton.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(changeButton);

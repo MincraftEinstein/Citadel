@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel.server.entity;
 
+import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.server.message.DanceJukeboxMessage;
 import net.minecraft.core.BlockPos;
 
 public interface IDancesToJukebox {
@@ -9,8 +11,7 @@ public interface IDancesToJukebox {
     void setJukeboxPos(BlockPos pos);
 
     default void onClientPlayMusicDisc(int entityId, BlockPos pos, boolean dancing) {
-        // TODO ender
-//        PacketDistributor.sendToServer(new DanceJukeboxMessage(entityId, dancing, pos));
+        PacketDistributor.sendToServer(new DanceJukeboxMessage(entityId, dancing, pos));
         this.setDancing(dancing);
         if (dancing) {
             this.setJukeboxPos(pos);

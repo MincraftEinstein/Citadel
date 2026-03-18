@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.tick;
 
+import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
 import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifierType;
@@ -40,8 +41,7 @@ public class ServerTickRateTracker extends TickRateTracker {
 
     @Override
     protected void sync() {
-        // TODO ender
-//        PacketDistributor.sendToAllPlayers(new SyncClientTickRateMessage(toTag()));
+        PacketDistributor.sendToAllPlayers(server, new SyncClientTickRateMessage(toTag()));
     }
 
     public int getServerTickLengthMs() {

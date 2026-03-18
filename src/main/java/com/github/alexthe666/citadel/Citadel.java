@@ -11,11 +11,14 @@ import com.github.alexthe666.citadel.server.block.CitadelLecternBlock;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
+import com.github.alexthe666.citadel.server.message.*;
 import com.github.alexthe666.citadel.web.WebHelper;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -85,6 +88,7 @@ public class Citadel implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             VillageHouseManager.addAllHouses(server.registryAccess());
         });
+        registerPayloads();
 
         LecternBooks.init();
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
@@ -113,21 +117,20 @@ public class Citadel implements ModInitializer {
         }
     }
 
-    // TODO ender
-//    @SubscribeEvent
-//    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-//        final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
-//        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
-//        registrar.playBidirectional(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
-//        // AnimationMessage is sent from server to all clients via sendToAllPlayers
-//        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
-//        // DanceJukeboxMessage is sent from client to server via sendToServer
-//        registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);
-//        // SyncePathMessage is sent from server to specific player via sendToPlayer
-//        registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
-//        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
-//        registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
-//    }
+    public static void registerPayloads() {
+        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
+        PayloadTypeRegistry.playC2S().register(PropertiesMessage.TYPE, PropertiesMessage.CODEC);
+        PayloadTypeRegistry.playS2C().register(PropertiesMessage.TYPE, PropertiesMessage.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(PropertiesMessage.TYPE, (message, ctx) -> PropertiesMessage.handle(message, ctx.player()));
+        // AnimationMessage is sent from server to all clients via sendToAllPlayers
+        PayloadTypeRegistry.playS2C().register(AnimationMessage.TYPE, AnimationMessage.CODEC);
+        // DanceJukeboxMessage is sent from client to server via sendToServer
+        PayloadTypeRegistry.playS2C().register(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC);
+        // SyncePathMessage is sent from server to specific player via sendToPlayer
+        PayloadTypeRegistry.playS2C().register(SyncePathMessage.TYPE, SyncePathMessage.CODEC);
+        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
+        PayloadTypeRegistry.playS2C().register(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC);
+    }
 
     private static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
         return switch (FabricLoader.getInstance().getEnvironmentType()) {

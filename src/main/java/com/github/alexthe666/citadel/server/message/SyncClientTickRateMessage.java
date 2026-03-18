@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -29,12 +30,7 @@ public class SyncClientTickRateMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    // TODO ender. might not be needed
-//    public static void handle(final SyncClientTickRateMessage message, IPayloadContext context) {
-//        context.enqueueWork(() -> {
-//            if (context.flow().isClientbound()) {
-//                Citadel.PROXY.handleClientTickRatePacket(message.compound);
-//            }
-//        });
-//    }
+    public static void handle(final SyncClientTickRateMessage message) {
+        Citadel.PROXY.handleClientTickRatePacket(message.compound);
+    }
 }

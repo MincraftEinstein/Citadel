@@ -1,10 +1,16 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class PropertiesMessage implements CustomPacketPayload {
 
@@ -35,18 +41,15 @@ public class PropertiesMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    // TODO ender. might not be needed
-//    public static void handle(final PropertiesMessage message, IPayloadContext context) {
-//        context.enqueueWork(() -> {
-//            if (context.flow().isClientbound()) {
-//                Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
-//            } else {
-//                Entity e = context.player().level().getEntity(message.entityID);
-//                if (e instanceof LivingEntity && (message.propertyID.equals("CitadelPatreonConfig") || message.propertyID.equals("CitadelTagUpdate"))) {
-//                    CitadelEntityData.setCitadelTag((LivingEntity) e, message.compound);
-//
-//                }
-//            }
-//        });
-//    }
+    public static void handle(final PropertiesMessage message, @Nullable Player player) {
+        if (player == null) {
+            Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
+        } else {
+            Entity e = player.level().getEntity(message.entityID);
+            if (e instanceof LivingEntity && (message.propertyID.equals("CitadelPatreonConfig") || message.propertyID.equals("CitadelTagUpdate"))) {
+                CitadelEntityData.setCitadelTag((LivingEntity) e, message.compound);
+
+            }
+        }
+    }
 }

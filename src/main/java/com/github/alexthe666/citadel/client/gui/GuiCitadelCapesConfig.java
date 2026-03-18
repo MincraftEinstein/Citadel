@@ -2,7 +2,9 @@ package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
+import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -113,8 +115,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
                 tag.putBoolean("CitadelCapeDisabled", false);
             }
             CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-            // TODO ender
-//            PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
+            PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(button);

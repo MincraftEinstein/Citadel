@@ -1,10 +1,12 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public class DanceJukeboxMessage implements CustomPacketPayload {
 
@@ -39,17 +41,10 @@ public class DanceJukeboxMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    // TODO ender. might not be needed
-//    public static void handle(final DanceJukeboxMessage message, IPayloadContext context) {
-//        context.enqueueWork(() -> {
-//            Player player = context.player();
-//            if (context.flow().isClientbound()) {
-//                player = Citadel.PROXY.getClientSidePlayer();
-//            }
-//            if (player != null) {
-//                Citadel.PROXY.handleJukeboxPacket(player.level(), message.entityID, message.jukeBox, message.dance);
-//
-//            }
-//        });
-//    }
+    public static void handle(final DanceJukeboxMessage message) {
+        Player player = Citadel.PROXY.getClientSidePlayer();
+        if (player != null) {
+            Citadel.PROXY.handleJukeboxPacket(player.level(), message.entityID, message.jukeBox, message.dance);
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.client.render.pathfinding.PathfindingDebugRenderer;
+import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -52,16 +54,11 @@ public class SyncPathReachedMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    // TODO ender. might not be needed
-//    public static void handle(final SyncPathReachedMessage message, IPayloadContext context) {
-//        context.enqueueWork(() -> {
-//            if (context.flow().isClientbound()) {
-//                for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath) {
-//                    if (message.reached.contains(node.pos)) {
-//                        node.setReachedByWorker(true);
-//                    }
-//                }
-//            }
-//        });
-//    }
+    public static void handle(final SyncPathReachedMessage message) {
+        for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath) {
+            if (message.reached.contains(node.pos)) {
+                node.setReachedByWorker(true);
+            }
+        }
+    }
 }
