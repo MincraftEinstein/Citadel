@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
+import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.github.alexthe666.citadel.client.game.Tetris;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
@@ -17,11 +18,14 @@ import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.mixin.refabricated.ScreenAccessor;
+import com.github.alexthe666.citadel.refabrciated.client.event.RenderSplashTextEvents;
 import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
+import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -43,6 +47,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,6 +94,7 @@ public class ClientProxy extends ServerProxy {
             screenOpen(minecraft, screen);
             onOpenGui(screen);
         });
+        RenderSplashTextEvents.PRE.register(this::renderSplashTextBefore);
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> clientTick());
     }
 
@@ -176,22 +182,20 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    // TODO ender
-//    @SubscribeEvent
-//    public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
-//        if (CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null) {
-//            event.setResult(TriState.TRUE);
-//            float hue = (System.currentTimeMillis() % 6000) / 6000f;
-//            event.getGuiGraphics().pose().mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 360));
-//            if (!aprilFoolsTetrisGame.isStarted()) {
-//                event.setSplashText("Psst... press 'T' ;)");
-//            } else {
-//                event.setSplashText("");
-//            }
-//            int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
-//            event.setSplashTextColor(rainbow);
-//        }
-//    }
+    public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
+        if (CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null) {
+            event.setResult(TriState.TRUE);
+            float hue = (System.currentTimeMillis() % 6000) / 6000f;
+            event.getGuiGraphics().pose().mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 360));
+            if (!aprilFoolsTetrisGame.isStarted()) {
+                event.setSplashText("Psst... press 'T' ;)");
+            } else {
+                event.setSplashText("");
+            }
+            int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
+            event.setSplashTextColor(rainbow);
+        }
+    }
 
     // TODO ender
 //    @SubscribeEvent
