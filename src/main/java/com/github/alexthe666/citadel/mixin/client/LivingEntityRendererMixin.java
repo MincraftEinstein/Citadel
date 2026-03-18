@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventLivingRenderer;
-import com.github.alexthe666.citadel.refabrciated.client.event.CitadelClientEvents;
+import com.github.alexthe666.citadel.refabrciated.client.event.LivingRendererEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,7 +27,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_setupRotations(T entity, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale, CallbackInfo ci) {
         EventLivingRenderer.SetupRotations event = new EventLivingRenderer.SetupRotations(entity, model, poseStack, yBodyRot, partialTick);
-        CitadelClientEvents.LivingRendererEvents.SETUP_ROTATIONS.invoker().event(event);
+        LivingRendererEvents.SETUP_ROTATIONS.invoker().event(event);
     }
 
     @Inject(
@@ -41,7 +41,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_setupAnim_before(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PreSetupAnimations event = new EventLivingRenderer.PreSetupAnimations(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        CitadelClientEvents.LivingRendererEvents.AccessToBufferSourceEvents.PRE_ANIM.invoker().event(event);
+        LivingRendererEvents.AccessToBufferSourceEvents.PRE_ANIM.invoker().event(event);
     }
 
     @Inject(
@@ -56,7 +56,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_setupAnim_after(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PostSetupAnimations event = new EventLivingRenderer.PostSetupAnimations(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        CitadelClientEvents.LivingRendererEvents.AccessToBufferSourceEvents.POST_ANIM.invoker().event(event);
+        LivingRendererEvents.AccessToBufferSourceEvents.POST_ANIM.invoker().event(event);
     }
 
     @Inject(
@@ -66,6 +66,6 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_renderToBuffer(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PostRenderModel event = new EventLivingRenderer.PostRenderModel(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        CitadelClientEvents.LivingRendererEvents.AccessToBufferSourceEvents.POST_RENDER_MODEL.invoker().event(event);
+        LivingRendererEvents.AccessToBufferSourceEvents.POST_RENDER_MODEL.invoker().event(event);
     }
 }

@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
-import com.github.alexthe666.citadel.refabrciated.client.event.CitadelClientEvents;
+import com.github.alexthe666.citadel.refabrciated.client.event.RenderSplashTextEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -39,7 +39,7 @@ public class SplashRendererMixin {
     protected void citadel_preRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         guiGraphics.pose().pushPose();
         EventRenderSplashText.Pre event = new EventRenderSplashText.Pre(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(), 16776960);
-        CitadelClientEvents.RenderSplashText.PRE.invoker().event(event);
+        RenderSplashTextEvents.PRE.invoker().event(event);
         if (event.getResult() == TriState.TRUE) {
             splash = event.getSplashText();
             splashTextColor = event.getSplashTextColor();
@@ -57,7 +57,7 @@ public class SplashRendererMixin {
     )
     protected void citadel_postRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         EventRenderSplashText.Post event = new EventRenderSplashText.Post(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
-        CitadelClientEvents.RenderSplashText.POST.invoker().event(event);
+        RenderSplashTextEvents.POST.invoker().event(event);
         guiGraphics.pose().popPose();
     }
 
