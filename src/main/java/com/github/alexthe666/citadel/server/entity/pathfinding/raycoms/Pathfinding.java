@@ -4,6 +4,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
  */
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.refabrciated.ServerGetter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +50,7 @@ public final class Pathfinding {
 
         @Override
         public Thread newThread(final @NotNull Runnable runnable) throws RuntimeException {
-            // TODO ender
-            BlockableEventLoop<?> workqueue = null; //LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
+            BlockableEventLoop<?> workqueue = ServerGetter.getServer();
             ClassLoader classLoader;
             if (workqueue.isSameThread()) {
                 classLoader = Thread.currentThread().getContextClassLoader();

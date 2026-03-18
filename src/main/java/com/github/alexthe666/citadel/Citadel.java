@@ -6,6 +6,7 @@ import com.github.alexthe666.citadel.item.ItemCitadelBook;
 import com.github.alexthe666.citadel.item.ItemCitadelDebug;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
 import com.github.alexthe666.citadel.item.component.CustomRenderDisplay;
+import com.github.alexthe666.citadel.refabrciated.ServerGetter;
 import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlock;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
@@ -87,6 +88,7 @@ public class Citadel implements ModInitializer {
         CitadelEvents.init();
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             VillageHouseManager.addAllHouses(server.registryAccess());
+            ServerGetter.setServer(server);
         });
         registerPayloads();
 
