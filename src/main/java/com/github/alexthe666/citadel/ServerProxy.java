@@ -1,6 +1,8 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
+import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -56,17 +58,15 @@ public class ServerProxy {
             ServerTickRateTracker tracker = ServerTickRateTracker.getForServer(((ServerLevel) level).getServer());
             if (tracker.isTickingHandled(entity)) {
                 return false;
-            }
-            else if (!tracker.hasNormalTickRate(entity)) {
-                // TODO ender
-//                EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-//                NeoForge.EVENT_BUS.post(event);
-//                if (event.isCanceled()) {
-//                    return true;
-//                } else {
-                tracker.addTickBlockedEntity(entity);
-//                    return false;
-//                }
+            } else if (!tracker.hasNormalTickRate(entity)) {
+                EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
+                CitadelCommonEvents.CHANGE_ENTITY_TICK_RATE.invoker().event(event);
+                if (event.isCanceled()) {
+                    return true;
+                } else {
+                    tracker.addTickBlockedEntity(entity);
+                    return false;
+                }
             }
         }
         return true;

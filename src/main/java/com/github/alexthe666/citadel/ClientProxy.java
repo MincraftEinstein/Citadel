@@ -15,7 +15,9 @@ import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
+import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.ChatFormatting;
@@ -59,15 +61,14 @@ public class ClientProxy extends ServerProxy {
     public void onClientInit() {
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
-        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station"), new int[] {}));
-        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_red"), new int[] {0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
-        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_gray"), new int[] {0XA0A0A0, 0X888888, 0X646464, 0X575757}));
+        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station"), new int[]{}));
+        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
+        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
 
         if (CitadelConstants.debugShaders()) {
             PostEffectRegistry.registerEffect(RAINBOW_AURA_POST_SHADER);
@@ -102,8 +103,7 @@ public class ClientProxy extends ServerProxy {
 //                    event.addListener(button2);
                     height += 25;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -112,8 +112,7 @@ public class ClientProxy extends ServerProxy {
     public void screenRender(TitleScreen screen, GuiGraphics guiGraphics, float partialTicks) {
         if (aprilFoolsTetrisGame == null) {
             aprilFoolsTetrisGame = new Tetris();
-        }
-        else {
+        } else {
             aprilFoolsTetrisGame.render(screen, guiGraphics, partialTicks);
         }
     }
@@ -211,8 +210,7 @@ public class ClientProxy extends ServerProxy {
             if (aprilFoolsTetrisGame != null) {
                 if (Minecraft.getInstance().screen instanceof TitleScreen) {
                     aprilFoolsTetrisGame.tick();
-                }
-                else {
+                } else {
                     aprilFoolsTetrisGame.reset();
                 }
             }
@@ -240,8 +238,7 @@ public class ClientProxy extends ServerProxy {
                 if (lastHoveredItem == null || next.getKey() != lastHoveredItem) {
                     if (progress == 0) {
                         it.remove();
-                    }
-                    else {
+                    } else {
                         next.setValue(progress - 1);
                     }
                 }
@@ -279,8 +276,7 @@ public class ClientProxy extends ServerProxy {
             if (entity != null) {
                 if (index == -1) {
                     entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
-                }
-                else {
+                } else {
                     entity.setAnimation(entity.getAnimations()[index]);
                 }
                 entity.setAnimationTick(0);
@@ -327,17 +323,15 @@ public class ClientProxy extends ServerProxy {
         ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
         if (tracker.isTickingHandled(entity)) {
             return false;
-        }
-        else if (!tracker.hasNormalTickRate(entity)) {
-            // TODO ender
-//            EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-//            NeoForge.EVENT_BUS.post(event);
-//            if (event.isCanceled()) {
-//                return true;
-//            } else {
-            tracker.addTickBlockedEntity(entity);
-//                return false;
-//            }
+        } else if (!tracker.hasNormalTickRate(entity)) {
+            EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
+            CitadelCommonEvents.CHANGE_ENTITY_TICK_RATE.invoker().event(event);
+            if (event.isCanceled()) {
+                return true;
+            } else {
+                tracker.addTickBlockedEntity(entity);
+                return false;
+            }
         }
         return true;
     }
