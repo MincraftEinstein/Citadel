@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.refabrciated.client.event;
 
 import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
+import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.util.TriState;
@@ -19,6 +20,16 @@ public interface CitadelClientEvents {
     }
 
 
+    Event<PosePlayerHand> POSE_PLAYER_HAND = EventFactory.createArrayBacked(PosePlayerHand.class, callbacks -> event -> {
+        for (PosePlayerHand callback : callbacks) {
+            callback.event(event);
+            if (event.getResult() == TriState.TRUE) return;
+        }
+    });
 
+    @FunctionalInterface
+    interface PosePlayerHand {
+        void event(EventPosePlayerHand event);
+    }
 
 }

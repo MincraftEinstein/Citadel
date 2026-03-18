@@ -1,6 +1,9 @@
 package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.CitadelConstants;
+import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
+import com.github.alexthe666.citadel.refabrciated.client.event.CitadelClientEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
@@ -22,22 +25,16 @@ public abstract class HumanoidModelMixin extends Model {
 
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseRightArm", cancellable = true)
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
-        // TODO ender
-//        EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
-//        NeoForge.EVENT_BUS.post(event);
-//        if (event.getResult() == TriState.TRUE) {
-//            ci.cancel();
-//        }
+        EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
+        CitadelClientEvents.POSE_PLAYER_HAND.invoker().event(event);
+        if (event.getResult() == TriState.TRUE) ci.cancel();
     }
 
 
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseLeftArm", cancellable = true)
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
-        // TODO ender
-//        EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
-//        NeoForge.EVENT_BUS.post(event);
-//        if (event.getResult() == TriState.TRUE) {
-//            ci.cancel();
-//        }
+        EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
+        CitadelClientEvents.POSE_PLAYER_HAND.invoker().event(event);
+        if (event.getResult() == TriState.TRUE) ci.cancel();
     }
 }
