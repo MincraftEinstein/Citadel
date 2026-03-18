@@ -1,7 +1,10 @@
 package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.CitadelConstants;
+import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
+import com.github.alexthe666.citadel.refabrciated.client.event.CitadelClientEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
@@ -29,12 +32,11 @@ public abstract class ClientLevelMixin extends Level {
 
     @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "getStarBrightness", cancellable = true)
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
-        // TODO ender
-//        EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
-//        NeoForge.EVENT_BUS.post(event);
-//        if (event.getResult() == TriState.TRUE) {
-//            cir.setReturnValue(event.getBrightness());
-//        }
+        EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
+        CitadelClientEvents.STAR_BRIGHTNESS.invoker().event(event);
+        if (event.getResult() == TriState.TRUE) {
+            cir.setReturnValue(event.getBrightness());
+        }
     }
 
     @ModifyConstant(
