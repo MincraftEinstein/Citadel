@@ -20,7 +20,7 @@ public class ItemBlockRenderTypesMixin {
             method = "getRenderLayer")
     private static void citadel_getFluidRenderLayer(FluidState fluidState, CallbackInfoReturnable<RenderType> cir) {
         EventGetFluidRenderType event = new EventGetFluidRenderType(fluidState, cir.getReturnValue());
-        CitadelClientEvents.FLUID_RENDER_TYPE.invoker().event(event);
+        CitadelClientEvents.FLUID_RENDER_TYPE.invoker().post(event);
         if (event.getResult() == TriState.TRUE) cir.setReturnValue(event.getRenderType());
     }
 }

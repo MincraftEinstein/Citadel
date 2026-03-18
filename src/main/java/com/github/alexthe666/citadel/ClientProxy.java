@@ -325,7 +325,7 @@ public class ClientProxy extends ServerProxy {
             return false;
         } else if (!tracker.hasNormalTickRate(entity)) {
             EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-            CitadelCommonEvents.CHANGE_ENTITY_TICK_RATE.invoker().event(event);
+            CitadelCommonEvents.CHANGE_ENTITY_TICK_RATE.invoker().post(event);
             if (event.isCanceled()) {
                 return true;
             } else {

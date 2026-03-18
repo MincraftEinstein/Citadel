@@ -7,47 +7,47 @@ import net.fabricmc.fabric.api.event.EventFactory;
 public interface LivingRendererEvents {
     Event<SetupRotations> SETUP_ROTATIONS = EventFactory.createArrayBacked(SetupRotations.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
         }
     });
 
     @FunctionalInterface
     interface SetupRotations {
-        void event(EventLivingRenderer.SetupRotations event);
+        void post(EventLivingRenderer.SetupRotations event);
     }
 
     interface AccessToBufferSourceEvents {
         Event<AccessToBufferSourceEvents.PreSetupAnimations> PRE_ANIM = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PreSetupAnimations.class, callbacks -> event -> {
             for (var callback : callbacks) {
-                callback.event(event);
+                callback.post(event);
             }
         });
 
         @FunctionalInterface
         interface PreSetupAnimations {
-            void event(EventLivingRenderer.PreSetupAnimations event);
+            void post(EventLivingRenderer.PreSetupAnimations event);
         }
 
         Event<AccessToBufferSourceEvents.PostSetupAnimations> POST_ANIM = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PostSetupAnimations.class, callbacks -> event -> {
             for (var callback : callbacks) {
-                callback.event(event);
+                callback.post(event);
             }
         });
 
         @FunctionalInterface
         interface PostSetupAnimations {
-            void event(EventLivingRenderer.PostSetupAnimations event);
+            void post(EventLivingRenderer.PostSetupAnimations event);
         }
 
         Event<AccessToBufferSourceEvents.PostRenderModel> POST_RENDER_MODEL = EventFactory.createArrayBacked(AccessToBufferSourceEvents.PostRenderModel.class, callbacks -> event -> {
             for (var callback : callbacks) {
-                callback.event(event);
+                callback.post(event);
             }
         });
 
         @FunctionalInterface
         interface PostRenderModel {
-            void event(EventLivingRenderer.PostRenderModel event);
+            void post(EventLivingRenderer.PostRenderModel event);
         }
 
     }

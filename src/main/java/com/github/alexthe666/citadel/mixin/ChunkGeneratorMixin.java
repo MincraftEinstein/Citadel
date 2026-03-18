@@ -25,7 +25,7 @@ public class ChunkGeneratorMixin {
         WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns = biome.value().getMobSettings().getMobs(mobCategory);
         if (biomeSpawns != cir.getReturnValue()) {
             EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
-            CitadelCommonEvents.MERGE_STRUCTURE_SPAWNS.invoker().event(event);
+            CitadelCommonEvents.MERGE_STRUCTURE_SPAWNS.invoker().post(event);
             if (event.getResult() == TriState.TRUE) cir.setReturnValue(event.getStructureSpawns());
         }
     }

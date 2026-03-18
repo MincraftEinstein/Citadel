@@ -79,7 +79,7 @@ public class LevelRendererMixin {
     )
     private int citadel_getTeamColor(Entity entity) {
         EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
-        CitadelClientEvents.OUTLINE_COLOR.invoker().event(event);
+        CitadelClientEvents.OUTLINE_COLOR.invoker().post(event);
         int color = entity.getTeamColor();
         if (event.getResult() == TriState.TRUE) {
             color = event.getColor();

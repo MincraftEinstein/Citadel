@@ -9,26 +9,26 @@ import net.fabricmc.fabric.api.util.TriState;
 public interface CitadelCommonEvents {
     Event<MergeStructureSpawns> MERGE_STRUCTURE_SPAWNS = EventFactory.createArrayBacked(MergeStructureSpawns.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
             if (event.getResult() == TriState.TRUE) return;
         }
     });
 
     @FunctionalInterface
     interface MergeStructureSpawns {
-        void event(EventMergeStructureSpawns event);
+        void post(EventMergeStructureSpawns event);
     }
 
     Event<ChangeEntityTickRate> CHANGE_ENTITY_TICK_RATE = EventFactory.createArrayBacked(ChangeEntityTickRate.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
             if (event.isCanceled()) return;
         }
     });
 
     @FunctionalInterface
     interface ChangeEntityTickRate {
-        void event(EventChangeEntityTickRate event);
+        void post(EventChangeEntityTickRate event);
     }
 
 }

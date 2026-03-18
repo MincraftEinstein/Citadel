@@ -26,7 +26,7 @@ public abstract class HumanoidModelMixin extends Model {
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseRightArm", cancellable = true)
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
-        CitadelClientEvents.POSE_PLAYER_HAND.invoker().event(event);
+        CitadelClientEvents.POSE_PLAYER_HAND.invoker().post(event);
         if (event.getResult() == TriState.TRUE) ci.cancel();
     }
 
@@ -34,7 +34,7 @@ public abstract class HumanoidModelMixin extends Model {
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseLeftArm", cancellable = true)
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
-        CitadelClientEvents.POSE_PLAYER_HAND.invoker().event(event);
+        CitadelClientEvents.POSE_PLAYER_HAND.invoker().post(event);
         if (event.getResult() == TriState.TRUE) ci.cancel();
     }
 }

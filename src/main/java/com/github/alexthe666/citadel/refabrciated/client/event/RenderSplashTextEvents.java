@@ -8,24 +8,24 @@ import net.fabricmc.fabric.api.util.TriState;
 public interface RenderSplashTextEvents {
     Event<RenderSplashTextPre> PRE = EventFactory.createArrayBacked(RenderSplashTextPre.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
             if (event.getResult() == TriState.TRUE) return;
         }
     });
 
     @FunctionalInterface
     interface RenderSplashTextPre {
-        void event(EventRenderSplashText.Pre event);
+        void post(EventRenderSplashText.Pre event);
     }
 
     Event<RenderSplashTextPost> POST = EventFactory.createArrayBacked(RenderSplashTextPost.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
         }
     });
 
     @FunctionalInterface
     interface RenderSplashTextPost {
-        void event(EventRenderSplashText.Post event);
+        void post(EventRenderSplashText.Post event);
     }
 }

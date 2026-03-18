@@ -34,7 +34,6 @@ public enum AnimationHandler {
      * @param entity the entity with an animation to be updated
      * @param <T>    the entity type
      */
-    // TODO ender
     public <T extends Entity & IAnimatedEntity> void updateAnimations(T entity) {
         if (entity.getAnimation() == null) {
             entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
@@ -42,14 +41,14 @@ public enum AnimationHandler {
             if (entity.getAnimation() != IAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
                     AnimationEvent.Start<T> event = new AnimationEvent.Start<>(entity, entity.getAnimation());
-                    AnimationEvents.START.invoker().event(event);
+                    AnimationEvents.START.invoker().post(event);
                     if (!event.isCanceled()) {
                         this.sendAnimationMessage(entity, event.getAnimation());
                     }
                 }
                 if (entity.getAnimationTick() < entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(entity.getAnimationTick() + 1);
-                    AnimationEvents.TICK.invoker().event(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
+                    AnimationEvents.TICK.invoker().post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(0);

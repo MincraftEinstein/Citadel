@@ -7,25 +7,25 @@ import net.fabricmc.fabric.api.event.EventFactory;
 public interface AnimationEvents {
     Event<Start> START = EventFactory.createArrayBacked(Start.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
             if (event.isCanceled()) return;
         }
     });
 
     @FunctionalInterface
     interface Start {
-        void event(AnimationEvent.Start<?> event);
+        void post(AnimationEvent.Start<?> event);
     }
 
     Event<Tick> TICK = EventFactory.createArrayBacked(Tick.class, callbacks -> event -> {
         for (var callback : callbacks) {
-            callback.event(event);
+            callback.post(event);
         }
     });
 
     @FunctionalInterface
     interface Tick {
-        void event(AnimationEvent.Tick<?> event);
+        void post(AnimationEvent.Tick<?> event);
     }
 
 }

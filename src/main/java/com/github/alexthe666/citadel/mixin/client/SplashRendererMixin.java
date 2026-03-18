@@ -39,7 +39,7 @@ public class SplashRendererMixin {
     protected void citadel_preRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         guiGraphics.pose().pushPose();
         EventRenderSplashText.Pre event = new EventRenderSplashText.Pre(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(), 16776960);
-        RenderSplashTextEvents.PRE.invoker().event(event);
+        RenderSplashTextEvents.PRE.invoker().post(event);
         if (event.getResult() == TriState.TRUE) {
             splash = event.getSplashText();
             splashTextColor = event.getSplashTextColor();
@@ -57,7 +57,7 @@ public class SplashRendererMixin {
     )
     protected void citadel_postRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         EventRenderSplashText.Post event = new EventRenderSplashText.Post(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
-        RenderSplashTextEvents.POST.invoker().event(event);
+        RenderSplashTextEvents.POST.invoker().post(event);
         guiGraphics.pose().popPose();
     }
 

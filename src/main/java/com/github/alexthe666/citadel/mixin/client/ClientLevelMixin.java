@@ -33,7 +33,7 @@ public abstract class ClientLevelMixin extends Level {
     @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "getStarBrightness", cancellable = true)
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
         EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
-        CitadelClientEvents.STAR_BRIGHTNESS.invoker().event(event);
+        CitadelClientEvents.STAR_BRIGHTNESS.invoker().post(event);
         if (event.getResult() == TriState.TRUE) {
             cir.setReturnValue(event.getBrightness());
         }
