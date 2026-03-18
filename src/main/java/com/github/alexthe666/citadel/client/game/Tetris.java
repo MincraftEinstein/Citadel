@@ -2,15 +2,20 @@ package com.github.alexthe666.citadel.client.game;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
@@ -203,13 +208,12 @@ public class Tetris {
         BlockState randomState = Blocks.DIRT.defaultBlockState();
         for (int tries = 0; tries < 5; tries++) {
             try {
-                // TODO
-//                BlockState block = BuiltInRegistries.BLOCK.getAny().get().getDelegate().value().defaultBlockState();
-//                BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
-//                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
-//                    randomState = block;
-//                    break;
-//                }
+                BlockState block = BuiltInRegistries.BLOCK.getRandom(random).get().value().defaultBlockState();
+                BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
+                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && ItemBlockRenderTypes.getChunkRenderType(block) == RenderType.solid()) {
+                    randomState = block;
+                    break;
+                }
             }
             catch (Exception ignored) {
             }
@@ -255,16 +259,15 @@ public class Tetris {
         }
     }
 
-    // TODO
     private void renderBlockState(BlockState state, float offsetX, float offsetY, float size) {
-//        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon(ModelData.EMPTY);
-//        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-//        float f = size * 0.5F;
-//        bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV1());
-//        bufferbuilder.addVertex(f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV1());
-//        bufferbuilder.addVertex(f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV0());
-//        bufferbuilder.addVertex(-f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV0());
-//        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon();
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        float f = size * 0.5F;
+        bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV1());
+        bufferbuilder.addVertex(f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV1());
+        bufferbuilder.addVertex(f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV0());
+        bufferbuilder.addVertex(-f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV0());
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
     public void render(TitleScreen screen, GuiGraphics guiGraphics, float partialTick) {
