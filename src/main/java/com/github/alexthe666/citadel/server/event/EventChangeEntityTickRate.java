@@ -1,9 +1,10 @@
 package com.github.alexthe666.citadel.server.event;
 
+import com.github.alexthe666.citadel.refabrciated.event.Event;
 import com.github.alexthe666.citadel.refabrciated.event.ICancellableEvent;
 import net.minecraft.world.entity.Entity;
 
-public class EventChangeEntityTickRate implements ICancellableEvent {
+public class EventChangeEntityTickRate extends Event implements ICancellableEvent {
     private Entity entity;
     private float targetTickRate;
 
@@ -18,17 +19,5 @@ public class EventChangeEntityTickRate implements ICancellableEvent {
 
     public float getTargetTickRate() {
         return targetTickRate;
-    }
-
-    private boolean canceled = false;
-
-    @Override
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
-    }
-
-    @Override
-    public boolean isCanceled() {
-        return canceled;
     }
 }

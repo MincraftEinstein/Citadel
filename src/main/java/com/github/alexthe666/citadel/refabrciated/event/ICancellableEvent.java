@@ -1,8 +1,12 @@
 package com.github.alexthe666.citadel.refabrciated.event;
 
 public interface ICancellableEvent {
-    void setCanceled(boolean canceled);
+    default void setCanceled(boolean canceled) {
+        ((Event) this).isCanceled = canceled;
+    }
 
-    boolean isCanceled();
+    default boolean isCanceled() {
+        return ((Event) this).isCanceled;
+    }
 }
 
