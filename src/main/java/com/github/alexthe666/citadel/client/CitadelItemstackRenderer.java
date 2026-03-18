@@ -46,11 +46,13 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             Random random = new Random();
             boolean animateAnyways = false;
 
-            CustomRenderDisplay display = stack.getOrDefault(Citadel.CUSTOM_RENDER_DISPLAY, CustomRenderDisplay.DEFAULT);
+            // TODO ender
+            CustomRenderDisplay display = CustomRenderDisplay.DEFAULT;//stack.getOrDefault(Citadel.CUSTOM_RENDER_DISPLAY, CustomRenderDisplay.DEFAULT);
 
-            if (!stack.has(Citadel.CUSTOM_RENDER_DISPLAY)) {
-                animateAnyways = true;
-            }
+            // TODO ender
+//            if (!stack.has(Citadel.CUSTOM_RENDER_DISPLAY)) {
+//                animateAnyways = true;
+//            }
 
             poseStack.pushPose();
             poseStack.translate(0.5F, 0.5f, 0.5f);
@@ -82,24 +84,26 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             RenderSystem.enableDepthTest();
             Holder<MobEffect> effect;
 
-            if (stack.has(Citadel.DISPLAY_EFFECT)) {
-                effect = BuiltInRegistries.MOB_EFFECT.getHolderOrThrow(stack.get(Citadel.DISPLAY_EFFECT));
-            } else {
-                if (mobEffectList == null) {
-                    mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
-                }
-                int size = mobEffectList.size();
-                int time = (int) (Util.getMillis() / 500);
-                effect = mobEffectList.get(time % size);
-                if (effect == null) {
-                    effect = MobEffects.MOVEMENT_SPEED.getDelegate();
-                }
-            }
+            // TODO ender
+//            if (stack.has(Citadel.DISPLAY_EFFECT)) {
+//                effect = BuiltInRegistries.MOB_EFFECT.getHolderOrThrow(stack.get(Citadel.DISPLAY_EFFECT));
+//            } else {
+//                if (mobEffectList == null) {
+//                    mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
+//                }
+//                int size = mobEffectList.size();
+//                int time = (int) (Util.getMillis() / 500);
+//                effect = mobEffectList.get(time % size);
+//                if (effect == null) {
+//                    effect = MobEffects.MOVEMENT_SPEED.getDelegate();
+//                }
+//            }
 
             MobEffectTextureManager potionspriteuploader = Minecraft.getInstance().getMobEffectTextures();
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
-            TextureAtlasSprite sprite = potionspriteuploader.get(effect);
+            // TODO ender
+            TextureAtlasSprite sprite = null;//potionspriteuploader.get(effect);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, sprite.atlasLocation());
@@ -114,7 +118,8 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         }
         if (stack.getItem() == Citadel.ICON_ITEM.get()) {
-            ResourceLocation texture = stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
+            // TODO ender
+            ResourceLocation texture = DEFAULT_ICON_TEXTURE;//stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);

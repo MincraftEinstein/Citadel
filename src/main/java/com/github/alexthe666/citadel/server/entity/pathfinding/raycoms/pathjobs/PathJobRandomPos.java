@@ -12,8 +12,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Path;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 
@@ -21,6 +21,7 @@ import java.util.Objects;
  * Job that handles random pathing.
  */
 public class PathJobRandomPos extends AbstractPathJob {
+
     /**
      * Direction to walk to.
      */

@@ -23,12 +23,13 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
     }
 
     public static boolean isClearForMovementBetweenRespectCustomCollisions(Mob mob, Vec3 pos1, Vec3 pos2, boolean allowSwimming) {
-        Vec3 vec3 = new Vec3(pos2.x, pos2.y + (double)mob.getBbHeight() * 0.5, pos2.z);
+        Vec3 vec3 = new Vec3(pos2.x, pos2.y + (double) mob.getBbHeight() * 0.5, pos2.z);
         BlockHitResult hitResult = mob.level()
                 .clip(new ClipContext(pos1, vec3, ClipContext.Block.COLLIDER, allowSwimming ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, mob));
-        if(hitResult.getType() == HitResult.Type.MISS){
+        if (hitResult.getType() == HitResult.Type.MISS) {
             return true;
-        }else{
+        }
+        else {
             BlockPos hitPos = hitResult.getBlockPos();
             BlockState state = mob.level().getBlockState(hitPos);
             return mob instanceof ICustomCollisions customCollisions && customCollisions.canPassThrough(hitPos, state, state.getCollisionShape(mob.level(), hitPos));

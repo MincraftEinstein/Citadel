@@ -10,14 +10,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Path;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Job that handles moving away from something.
  */
-public class PathJobMoveAwayFromLocation extends AbstractPathJob
-{
+public class PathJobMoveAwayFromLocation extends AbstractPathJob {
+
     /**
      * Position to run to, in order to avoid something.
      */
@@ -26,7 +25,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * Required avoidDistance.
      */
-    protected final int      avoidDistance;
+    protected final int avoidDistance;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -39,13 +38,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param entity        the entity.
      */
     public PathJobMoveAwayFromLocation(
-        final Level world,
-        final BlockPos start,
-        final BlockPos avoid,
-        final int avoidDistance,
-        final int range,
-        final LivingEntity entity)
-    {
+            final Level world,
+            final BlockPos start,
+            final BlockPos avoid,
+            final int avoidDistance,
+            final int range,
+            final LivingEntity entity) {
         super(world, start, avoid, range, entity);
 
         this.avoid = new BlockPos(avoid);
@@ -59,10 +57,8 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      */
     @Nullable
     @Override
-    protected Path search()
-    {
-        if (Pathfinding.isDebug())
-        {
+    protected Path search() {
+        if (Pathfinding.isDebug()) {
             Citadel.LOGGER.info("Pathfinding from [{},{},{}] away from [{},{},{}]", start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ());
         }
 
@@ -76,8 +72,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(final BlockPos pos)
-    {
+    protected double computeHeuristic(final BlockPos pos) {
         return -avoid.distSqr(pos);
     }
 

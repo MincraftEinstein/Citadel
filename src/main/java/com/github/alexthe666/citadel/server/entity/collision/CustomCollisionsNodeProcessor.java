@@ -11,7 +11,6 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
     public CustomCollisionsNodeProcessor() {
     }
 
-
     @Override
     public PathType getPathType(PathfindingContext context, int x, int y, int z) {
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();

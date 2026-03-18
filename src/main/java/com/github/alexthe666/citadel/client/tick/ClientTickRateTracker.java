@@ -45,7 +45,6 @@ public class ClientTickRateTracker extends TickRateTracker {
         super.masterTick();
         if(client.getTimer() instanceof DeltaTracker.Timer timer){
             timer.msPerTick = getClientTickRate();
-
         }
     }
 

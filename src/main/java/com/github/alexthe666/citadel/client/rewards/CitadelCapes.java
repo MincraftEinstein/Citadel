@@ -4,8 +4,8 @@ import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class CitadelCapes {
@@ -17,25 +17,25 @@ public class CitadelCapes {
         CAPES.add(new Cape(uuids, translationKey, texture));
     }
 
-    public static List<Cape> getCapesFor(UUID uuid){
+    public static List<Cape> getCapesFor(UUID uuid) {
         return CAPES.isEmpty() ? CAPES : CAPES.stream().filter(cape -> cape.isFor(uuid)).toList();
     }
 
 
     public static Cape getNextCape(String currentID, UUID playerUUID) {
-        if(CAPES.isEmpty()){
+        if (CAPES.isEmpty()) {
             return null;
         }
         int currentIndex = -1;
-        for(int i = 0; i < CAPES.size(); i++){
-            if(CAPES.get(i).getIdentifier().equals(currentID)){
-               currentIndex = i;
-               break;
+        for (int i = 0; i < CAPES.size(); i++) {
+            if (CAPES.get(i).getIdentifier().equals(currentID)) {
+                currentIndex = i;
+                break;
             }
         }
         boolean flag = false;
-        for(int i = currentIndex + 1; i < CAPES.size(); i++){
-            if(CAPES.get(i).isFor(playerUUID)){
+        for (int i = currentIndex + 1; i < CAPES.size(); i++) {
+            if (CAPES.get(i).isFor(playerUUID)) {
                 return CAPES.get(i);
             }
         }
@@ -43,7 +43,7 @@ public class CitadelCapes {
     }
 
     @Nullable
-    public static Cape getById(String identifier){
+    public static Cape getById(String identifier) {
         for (Cape cape : CAPES) {
             if (cape.getIdentifier().equals(identifier)) {
                 return cape;
@@ -53,7 +53,7 @@ public class CitadelCapes {
     }
 
     @Nullable
-    private static Cape getFirstApplicable(Player player){
+    private static Cape getFirstApplicable(Player player) {
         for (Cape cape : CAPES) {
             if (cape.isFor(player.getUUID())) {
                 return cape;
@@ -62,23 +62,26 @@ public class CitadelCapes {
         return null;
     }
 
-    public static Cape getCurrentCape(Player player){
+    public static Cape getCurrentCape(Player player) {
         CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(player);
-        if(tag.getBoolean("CitadelCapeDisabled")){
+        if (tag.getBoolean("CitadelCapeDisabled")) {
             return null;
         }
-        if(tag.contains("CitadelCapeType")){
-            if(tag.getString("CitadelCapeType").isEmpty()){
+        if (tag.contains("CitadelCapeType")) {
+            if (tag.getString("CitadelCapeType").isEmpty()) {
                 return getFirstApplicable(player);
-            }else{
+            }
+            else {
                 return CitadelCapes.getById(tag.getString("CitadelCapeType"));
             }
-        }else{
+        }
+        else {
             return null;
         }
     }
 
-    public static class Cape{
+    public static class Cape {
+
         private List<UUID> isFor;
         private String identifier;
         private ResourceLocation texture;

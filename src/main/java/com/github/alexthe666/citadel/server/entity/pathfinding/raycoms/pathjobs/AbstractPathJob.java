@@ -5,13 +5,10 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.*;
-import com.github.alexthe666.citadel.server.message.SyncePathMessage;
-import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -29,9 +26,8 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -44,6 +40,7 @@ import static com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.Su
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
 public abstract class AbstractPathJob implements Callable<Path> {
+
     /**
      * Which citizens are being tracked by which players.
      */
@@ -292,7 +289,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet()) {
             if (entry.getValue().equals(mob.getUUID())) {
-                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
+                // TODO ender
+//                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
             }
         }
     }
@@ -330,7 +328,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         BlockState down = world.getBlockState(pos.below());
-        while (!bs.blocksMotion() && !down.blocksMotion() && !down.getBlock().isLadder(down, world, pos.below(), entity) && bs.getFluidState().isEmpty()) {
+        // TODO ender
+        while (!bs.blocksMotion() && !down.blocksMotion() /*&& !down.getBlock().isLadder(down, world, pos.below(), entity)*/ && bs.getFluidState().isEmpty()) {
             pos.move(Direction.DOWN, 1);
             bs = down;
             down = world.getBlockState(pos.below());
@@ -347,20 +346,23 @@ public abstract class AbstractPathJob implements Callable<Path> {
                 pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
                 bs = world.getBlockState(pos);
             }
-        } else if (b instanceof FenceBlock || b instanceof WallBlock || bs.isSolid()) {
+        }
+        else if (b instanceof FenceBlock || b instanceof WallBlock || bs.isSolid()) {
             //Push away from fence
             final double dX = entity.getX() - Math.floor(entity.getX());
             final double dZ = entity.getZ() - Math.floor(entity.getZ());
 
             if (dX < ONE_SIDE) {
                 pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
-            } else if (dX > OTHER_SIDE) {
+            }
+            else if (dX > OTHER_SIDE) {
                 pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
             }
 
             if (dZ < ONE_SIDE) {
                 pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
-            } else if (dZ > OTHER_SIDE) {
+            }
+            else if (dZ > OTHER_SIDE) {
                 pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
             }
         }
@@ -381,16 +383,21 @@ public abstract class AbstractPathJob implements Callable<Path> {
         if (block instanceof VineBlock) {
             if (state.getValue(VineBlock.SOUTH)) {
                 p.setLadderFacing(Direction.NORTH);
-            } else if (state.getValue(VineBlock.WEST)) {
+            }
+            else if (state.getValue(VineBlock.WEST)) {
                 p.setLadderFacing(Direction.EAST);
-            } else if (state.getValue(VineBlock.NORTH)) {
+            }
+            else if (state.getValue(VineBlock.NORTH)) {
                 p.setLadderFacing(Direction.SOUTH);
-            } else if (state.getValue(VineBlock.EAST)) {
+            }
+            else if (state.getValue(VineBlock.EAST)) {
                 p.setLadderFacing(Direction.WEST);
             }
-        } else if (block instanceof LadderBlock) {
+        }
+        else if (block instanceof LadderBlock) {
             p.setLadderFacing(state.getValue(LadderBlock.FACING));
-        } else {
+        }
+        else {
             p.setLadderFacing(Direction.UP);
         }
     }
@@ -445,8 +452,10 @@ public abstract class AbstractPathJob implements Callable<Path> {
             final Map.Entry<Player, UUID> entry = iter.next();
             if (entry.getKey().isRemoved()) {
                 iter.remove();
-            } else if (entry.getValue().equals(mob.getUUID())) {
-                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
+            }
+            else if (entry.getValue().equals(mob.getUUID())) {
+                // TODO ender
+//                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
             }
         }
     }
@@ -460,12 +469,14 @@ public abstract class AbstractPathJob implements Callable<Path> {
             entitySizeXZStart = -(int) ((ICustomSizeNavigator) entity).getXZNavSize();
             entitySizeXZEnd = (int) ((ICustomSizeNavigator) entity).getXZNavSize();
             entitySizeY = ((ICustomSizeNavigator) entity).getYNavSize();
-        } else {
+        }
+        else {
             float bbWidth = entity.getBbWidth();
             if (bbWidth <= 1.0F) {
                 entitySizeXZStart = 0;
                 entitySizeXZEnd = 1;
-            } else {
+            }
+            else {
                 entitySizeXZStart = -(int) Math.floor(entity.getBbWidth() / 2.0F);
                 entitySizeXZEnd = (int) Math.floor(entity.getBbWidth() / 2.0F);
             }
@@ -502,7 +513,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
         if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairBlock)) {
             if (dPos.getY() > 0) {
                 cost *= pathingOptions.jumpCost * Math.abs(dPos.getY());
-            } else {
+            }
+            else {
                 cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
             }
         }
@@ -530,7 +542,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
         if (isSwimming) {
             if (swimStart) {
                 cost *= pathingOptions.swimCostEnter;
-            } else {
+            }
+            else {
                 cost *= pathingOptions.swimCost;
             }
         }
@@ -551,7 +564,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
     public final Path call() {
         try {
             return search();
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             // Log everything, so exceptions of the pathfinding-thread show in Log
             Citadel.LOGGER.warn("Pathfinding Exception", e);
         }
@@ -657,8 +671,9 @@ public abstract class AbstractPathJob implements Callable<Path> {
             //After entity has climbed something step forward
             if (currentNode.parent != null && dPos.getX() == 0 && dPos.getZ() == 0 && dPos.getY() > 1) {
                 //Step forwards into the direction we climbed from
-                if (getHighest(currentNode.parent).getSecond() != null)
+                if (getHighest(currentNode.parent).getSecond() != null) {
                     walk(currentNode, getHighest(currentNode.parent).getSecond());
+                }
             }
         }
 
@@ -710,7 +725,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
         if (isLadder(start)) {
             startNode.setLadder();
-        } else if (isLiquid(world.getBlockState(start.below()))) {
+        }
+        else if (isLiquid(world.getBlockState(start.below()))) {
             startNode.setSwimming();
         }
 
@@ -783,7 +799,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
                 p.setOnRails(node.isOnRails());
                 if (p.isOnRails() && (!node.parent.isOnRails() || node.parent.parent == null)) {
                     p.setRailsEntry();
-                } else if (p.isOnRails() && points.length > pathLength + 1) {
+                }
+                else if (p.isOnRails() && points.length > pathLength + 1) {
                     final PathPointExtended point = ((PathPointExtended) points[pathLength + 1]);
                     if (!point.isOnRails()) {
                         point.setRailsExit();
@@ -799,7 +816,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
                     //In the case of BlockVines (Which does not have Direction) we have to check the metadata of the vines... bitwise...
                     setLadderFacing(world, pos, p);
                 }
-            } else if (onALadder(node.parent, node.parent, pos)) {
+            }
+            else if (onALadder(node.parent, node.parent, pos)) {
                 p.setOnLadder(true);
             }
 
@@ -939,7 +957,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
             node = createNode(parent, pos, nodeKey, isSwimming, heuristic, cost, score);
             node.setOnRails(onRails);
             node.setCornerNode(corner);
-        } else if (updateCurrentNode(parent, node, heuristic, cost, score)) {
+        }
+        else if (updateCurrentNode(parent, node, heuristic, cost, score)) {
             return false;
         }
 
@@ -947,8 +966,9 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         //If we climbed something skip jumpPointSearch
         //This is a workaround so that the path generated doesn't go through blocks
-        if (pathingOptions.canClimb() && dPos.getY() > 1)
+        if (pathingOptions.canClimb() && dPos.getY() > 1) {
             return true;
+        }
 
         //  Jump Point Search-ish optimization:
         // If this MNode was a (heuristic-based) improvement on our parent,
@@ -976,7 +996,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         if (isLadder(pos)) {
             node.setLadder();
-        } else if (isSwimming) {
+        }
+        else if (isSwimming) {
             node.setSwimming();
         }
 
@@ -1035,7 +1056,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
                 if (lastSurfaceType == SurfaceType.FLYABLE) {
                     return pos.getY();
                 }
-            } else {
+            }
+            else {
                 lastSurfaceType = isWalkableSurface(below, pos);
                 if (lastSurfaceType == SurfaceType.WALKABLE) {
                     //  Level path
@@ -1080,7 +1102,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
             if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 4 || below.liquid()) {
                 //  Level path
                 return pos.getY() - i + 1;
-            } else if (below.isAir()) {
+            }
+            else if (below.isAir()) {
                 return -1;
             }
         }
@@ -1303,23 +1326,27 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
                     // We cannot enter a space of a trapdoor if its facing the opposite direction.
                     return direction != facing;
-                } else {
+                }
+                else {
                     return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock
                             || block.getBlock() instanceof FenceGateBlock)
                             || block.getBlock() instanceof PressurePlateBlock
                             || block.getBlock() instanceof SignBlock
                             || block.getBlock() instanceof AbstractBannerBlock;
                 }
-            } else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock) {
+            }
+            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock) {
                 return false;
-            } else {
+            }
+            else {
                 if (isLadder(block.getBlock(), pos)) {
                     return true;
                 }
 
-                // TODO: I'd be cool if dragons could squash multiple snow layers when walking over them
+                // TODO (this is an alex todo): I'd be cool if dragons could squash multiple snow layers when walking over them
                 if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.125 && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1)) {
-                    final PathType pathType = block.getBlockPathType(world, pos, null);
+                                            // TODO ender
+                    final PathType pathType = null;//block.getBlockPathType(world, pos, null);
                     return pathType == null;
                 }
                 return false;
@@ -1360,8 +1387,9 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
     protected boolean isPassableBB(final BlockPos parentPos, final BlockPos pos, MNode parent) {
         Direction facingDir = getXZFacing(parentPos, pos);
-        if (facingDir == Direction.DOWN || facingDir == Direction.UP)
+        if (facingDir == Direction.DOWN || facingDir == Direction.UP) {
             return false;
+        }
         facingDir = facingDir.getClockWise();
         for (int i = entitySizeXZStart; i <= entitySizeXZEnd; i++) {
             for (int j = 0; j < entitySizeY; j++) {
@@ -1378,8 +1406,9 @@ public abstract class AbstractPathJob implements Callable<Path> {
      */
     protected boolean isPassableBBDown(final BlockPos parentPos, final BlockPos pos, MNode parent) {
         Direction facingDir = getXZFacing(parentPos, pos);
-        if (facingDir == Direction.DOWN || facingDir == Direction.UP)
+        if (facingDir == Direction.DOWN || facingDir == Direction.UP) {
             return false;
+        }
         facingDir = facingDir.getClockWise();
         for (int i = entitySizeXZStart; i <= entitySizeXZEnd; i++) {
             for (int j = 0; j < entitySizeY; j++) {
@@ -1461,7 +1490,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
      * @return true if the block is a ladder.
      */
     protected boolean isLadder(final Block block, final BlockPos pos) {
-        return block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
+        // TODO ender
+        return false;//block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
     }
 
     protected boolean isLadder(final BlockPos pos) {

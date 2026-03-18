@@ -24,13 +24,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.structures.SnbtToNbt;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundEvents;
@@ -44,13 +40,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -144,7 +139,8 @@ public abstract class GuiBasicBook extends Screen {
                 ((LivingEntity) entity).yHeadRot = setY;
                 ((LivingEntity) entity).yHeadRotO = setY;
             }
-        } else {
+        }
+        else {
             f = 0;
             f1 = 0;
         }
@@ -201,7 +197,6 @@ public abstract class GuiBasicBook extends Screen {
     }
 
     private void addLinkButtons() {
-        this.renderables.clear();
         this.clearWidgets();
         addNextPreviousButtons();
         int k = (this.width - this.xSize) / 2;
@@ -246,10 +241,12 @@ public abstract class GuiBasicBook extends Screen {
             if (currentPageCounter < maxPagesFromPrinting) {
                 currentPageCounter++;
             }
-        } else {
+        }
+        else {
             if (currentPageCounter > 0) {
                 currentPageCounter--;
-            } else {
+            }
+            else {
                 if (this.internalPage != null && this.internalPage.parent().isPresent()) {
                     prevPageJSON = this.currentPageJSON;
                     currentPageJSON = getTextFileDirectory().withSuffix(this.internalPage.parent().orElseThrow());
@@ -317,7 +314,8 @@ public abstract class GuiBasicBook extends Screen {
                 //test if it exists. if no exception, then the language is supported
                 InputStream is = Minecraft.getInstance().getResourceManager().open(currentPageText);
                 is.close();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 invalid = true;
                 Citadel.LOGGER.warn("Could not find language file for translation, defaulting to english");
                 currentPageText = ResourceLocation.parse(getTextFileDirectory() + "en_us/" + internalPage.textFileToReadFrom());
@@ -336,7 +334,8 @@ public abstract class GuiBasicBook extends Screen {
             if (manager.byKey(registryName).isPresent()) {
                 return manager.byKey(registryName).get().value();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -402,10 +401,12 @@ public abstract class GuiBasicBook extends Screen {
                 ResourceLocation texture = tabulaRenderData.texture();
                 if (renderedTabulaModels.get(tabulaRenderData.model()) != null) {
                     model = renderedTabulaModels.get(tabulaRenderData.model());
-                } else {
+                }
+                else {
                     try {
                         model = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/" + tabulaRenderData.model().getNamespace() + "/" + tabulaRenderData.model().getPath()));
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         Citadel.LOGGER.warn("Could not load in tabula model for book at {}", tabulaRenderData.model());
                     }
                     renderedTabulaModels.put(tabulaRenderData.model(), model);
@@ -427,14 +428,16 @@ public abstract class GuiBasicBook extends Screen {
                             try {
                                 CompoundTag tag = NbtUtils.snbtToStructure(data.entityData().orElseThrow());
                                 entity.load(tag);
-                            } catch (CommandSyntaxException e) {
+                            }
+                            catch (CommandSyntaxException e) {
                                 e.printStackTrace();
                             }
                         }
 
                         return entity;
                     });
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Citadel.LOGGER.warn("Failed to create entity '{}' for book rendering, skipping.", data.entity(), e);
                     continue;
                 }
@@ -481,7 +484,8 @@ public abstract class GuiBasicBook extends Screen {
                 if (ing.getItems().length > 1) {
                     int currentIndex = (int) ((playerTicks / 20F) % ing.getItems().length);
                     stack = ing.getItems()[currentIndex];
-                } else {
+                }
+                else {
                     stack = ing.getItems()[0];
                 }
             }
@@ -588,7 +592,8 @@ public abstract class GuiBasicBook extends Screen {
                 page = BookPage.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(inputstream)).getOrThrow().getFirst();
             }
 
-        } catch (Exception e1) {
+        }
+        catch (Exception e1) {
             e1.printStackTrace();
             return null;
         }
@@ -648,7 +653,8 @@ public abstract class GuiBasicBook extends Screen {
                                         yIndex += 2;
                                     }
                                 }
-                            } else {
+                            }
+                            else {
                                 if (yIndex >= (buttonY - height) / 12F && yIndex <= (buttonY + height) / 12F) {
                                     if (buttonX < 90 && xIndex < 90 || buttonX >= 90 && xIndex >= 90) {
                                         yIndex++;
@@ -666,7 +672,8 @@ public abstract class GuiBasicBook extends Screen {
                                 page++;
                                 xIndex = 0;
                                 yIndex = 0;
-                            } else {
+                            }
+                            else {
                                 xIndex = 200;
                                 yIndex = 0;
                             }
@@ -681,7 +688,8 @@ public abstract class GuiBasicBook extends Screen {
                             yIndex++;
                         }
                         lineToPrint = word.equals("<NEWLINE>") ? "" : word;
-                    } else {
+                    }
+                    else {
                         lineToPrint = lineToPrint + " " + word;
                         if (last) {
                             linesFromPrinting++;
@@ -692,10 +700,12 @@ public abstract class GuiBasicBook extends Screen {
                     }
                 }
                 maxPagesFromPrinting = page;
-            } catch (Exception e1) {
+            }
+            catch (Exception e1) {
                 e1.printStackTrace();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Citadel.LOGGER.warn("Could not load in page .txt from json from page, page: {}", res);
         }
     }

@@ -1,7 +1,5 @@
 package com.github.alexthe666.citadel;
 
-import com.github.alexthe666.citadel.config.ConfigHolder;
-import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
 import com.github.alexthe666.citadel.item.ItemCitadelDebug;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
@@ -10,14 +8,13 @@ import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlock;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
-import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
-import com.github.alexthe666.citadel.server.message.*;
 import com.github.alexthe666.citadel.web.WebHelper;
-import com.mojang.serialization.MapCodec;
-import net.minecraft.core.RegistryAccess;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -26,27 +23,9 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.world.BiomeModifier;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,115 +33,128 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-@Mod("citadel")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-public class Citadel {
+public class Citadel implements ModInitializer {
+
+    public static final String MOD_ID = "citadel";
     public static final Logger LOGGER = LogManager.getLogger("citadel");
-    private static final String PROTOCOL_VERSION = Integer.toString(1);
 
     public static ServerProxy PROXY = unsafeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static List<String> PATREONS = new ArrayList<>();
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, "citadel");
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, "citadel");
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, "citadel");
-    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, "citadel");
 
-    public static final DeferredHolder<Item, ItemCitadelDebug> DEBUG_ITEM = ITEMS.register("debug", () -> new ItemCitadelDebug(new Item.Properties()));
-    public static final DeferredHolder<Item, ItemCitadelBook> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, ItemCustomRender> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, ItemCustomRender> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, ItemCustomRender> ICON_ITEM = ITEMS.register("icon_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> DEBUG_ITEM = register("debug", new ItemCitadelDebug(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> CITADEL_BOOK = register("citadel_book", new ItemCitadelBook(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> EFFECT_ITEM = register("effect_item", new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> FANCY_ITEM = register("fancy_item", new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> ICON_ITEM = register("icon_item", new ItemCustomRender(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomRenderDisplay>> CUSTOM_RENDER_DISPLAY = DATA_COMPONENTS.registerComponentType("custom_render_display", builder -> builder.persistent(CustomRenderDisplay.CODEC));
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> ICON_LOCATION = DATA_COMPONENTS.registerComponentType("icon_location", builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<MobEffect>>> DISPLAY_EFFECT = DATA_COMPONENTS.registerComponentType("display_effect", builder -> builder.persistent(ResourceKey.codec(Registries.MOB_EFFECT)).networkSynchronized(ResourceKey.streamCodec(Registries.MOB_EFFECT)));
+    public static final Supplier<DataComponentType<CustomRenderDisplay>> CUSTOM_RENDER_DISPLAY = registerComponentType("custom_render_display", builder -> builder.persistent(CustomRenderDisplay.CODEC));
 
-    public static final Supplier<Block> LECTERN = BLOCKS.register("lectern", () -> new CitadelLecternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LECTERN)));
+    public static final Supplier<DataComponentType<ResourceLocation>> ICON_LOCATION = registerComponentType("icon_location", builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+    public static final Supplier<DataComponentType<ResourceKey<MobEffect>>> DISPLAY_EFFECT = registerComponentType("display_effect", builder -> builder.persistent(ResourceKey.codec(Registries.MOB_EFFECT)).networkSynchronized(ResourceKey.streamCodec(Registries.MOB_EFFECT)));
+    public static final Supplier<Block> LECTERN = registerBlock("lectern", new CitadelLecternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LECTERN)));
 
-    public static final Supplier<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = BLOCK_ENTITIES.register("lectern", () -> BlockEntityType.Builder.of(CitadelLecternBlockEntity::new, LECTERN.get()).build(null));
+    public static final Supplier<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = registerBlockEntity("lectern", BlockEntityType.Builder.of(CitadelLecternBlockEntity::new, LECTERN.get()).build(null));
 
-    public Citadel(ModContainer modContainer, IEventBus bus) {
-        ITEMS.register(bus);
-        BLOCKS.register(bus);
-        BLOCK_ENTITIES.register(bus);
-        DATA_COMPONENTS.register(bus);
-        final DeferredRegister<MapCodec<? extends BiomeModifier>> serializers = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, "citadel");
-        serializers.register(bus);
-        serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
-        // Only register ClientProxy to event bus - ServerProxy has no @SubscribeEvent methods
-        if (FMLEnvironment.dist.isClient()) {
-            NeoForge.EVENT_BUS.register(PROXY);
-        }
-        modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
-        NeoForge.EVENT_BUS.register(new CitadelEvents());
-        // Register NeoForge bus events (non-mod lifecycle events)
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
-    }
+    // TODO ender
+//    public Citadel(ModContainer modContainer, IEventBus bus) {
+//        final DeferredRegister<MapCodec<? extends BiomeModifier>> serializers = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, "citadel");
+//        serializers.register(bus);
+//        serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
+//        // Only register ClientProxy to event bus - ServerProxy has no @SubscribeEvent methods
+//        if (FMLEnvironment.dist.isClient()) {
+//            NeoForge.EVENT_BUS.register(PROXY);
+//        }
+//        modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
+//        NeoForge.EVENT_BUS.register(new CitadelEvents());
+//        // Register NeoForge bus events (non-mod lifecycle events)
+//        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
+//    }
 
-    @SubscribeEvent
-    public static void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            PROXY.onPreInit();
-            LecternBooks.init();
-            BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
-            if (urlContents != null) {
-                try {
-                    String line;
-                    while ((line = urlContents.readLine()) != null) {
-                        PATREONS.add(line);
-                    }
-                } catch (IOException e) {
-                    LOGGER.warn("Failed to load patreon contributor perks");
-                }
-            } else LOGGER.warn("Failed to load patreon contributor perks");
+    @Override
+    public void onInitialize() {
+        CitadelEvents.init();
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            VillageHouseManager.addAllHouses(server.registryAccess());
         });
-    }
 
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
-        final ModConfig config = event.getConfig();
-        // Rebake the configs when they change
-        ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
-        if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
-            ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
-            ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
-            ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
-            //citadelTestBiomeData = SpawnBiomeConfig.create(ResourceLocation.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
+        LecternBooks.init();
+        BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
+        if (urlContents != null) {
+            try {
+                String line;
+                while ((line = urlContents.readLine()) != null) {
+                    PATREONS.add(line);
+                }
+                return;
+            }
+            catch (IOException e) {
+            }
         }
+
+        LOGGER.warn("Failed to load patreon contributor perks");
     }
 
-    @SubscribeEvent
-    public static void doClientStuff(final FMLClientSetupEvent event) {
-        event.enqueueWork(() -> PROXY.onClientInit());
-    }
+    // TODO when fzzy
+//    @SubscribeEvent
+//    public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
+//        final ModConfig config = event.getConfig();
+//        // Rebake the configs when they change
+//        ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
+//        if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
+//            ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
+//            ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
+//            ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
+//            //citadelTestBiomeData = SpawnBiomeConfig.create(ResourceLocation.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
+//        }
+//    }
 
-    @SubscribeEvent
-    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
-        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
-        registrar.playBidirectional(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
-        // AnimationMessage is sent from server to all clients via sendToAllPlayers
-        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
-        // DanceJukeboxMessage is sent from client to server via sendToServer
-        registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);
-        // SyncePathMessage is sent from server to specific player via sendToPlayer
-        registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
-        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
-        registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
-    }
-
-    // Registered manually to NeoForge.EVENT_BUS in constructor (not a mod bus event)
-    public static void onServerAboutToStart(ServerAboutToStartEvent event) {
-        RegistryAccess registryAccess = event.getServer().registryAccess();
-        VillageHouseManager.addAllHouses(registryAccess);
-    }
+    // TODO ender
+//    @SubscribeEvent
+//    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
+//        final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
+//        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
+//        registrar.playBidirectional(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
+//        // AnimationMessage is sent from server to all clients via sendToAllPlayers
+//        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
+//        // DanceJukeboxMessage is sent from client to server via sendToServer
+//        registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);
+//        // SyncePathMessage is sent from server to specific player via sendToPlayer
+//        registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
+//        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
+//        registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
+//    }
 
     private static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
-        return switch (FMLEnvironment.dist) {
+        return switch (FabricLoader.getInstance().getEnvironmentType()) {
             case CLIENT -> clientTarget.get().get();
-            case DEDICATED_SERVER -> serverTarget.get().get();
+            case SERVER -> serverTarget.get().get();
         };
+    }
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
+
+    public static Supplier<Item> register(String name, Item item) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, id(name), item);
+        return () -> registered;
+    }
+
+    public static <T> Supplier<DataComponentType<T>> registerComponentType(String name, Function<DataComponentType.Builder<T>, DataComponentType.Builder<T>> builder) {
+        DataComponentType<T> registered = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id(name), builder.apply(DataComponentType.builder()).build());
+        return () -> registered;
+    }
+
+    public static Supplier<Block> registerBlock(String name, Block block) {
+        Block registered = Registry.register(BuiltInRegistries.BLOCK, id(name), block);
+        return () -> registered;
+    }
+
+    public static <T extends BlockEntity> Supplier<BlockEntityType<T>> registerBlockEntity(String name, BlockEntityType<T> blockEntityType) {
+        BlockEntityType<T> registered = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id(name), blockEntityType);
+        return () -> registered;
     }
 }

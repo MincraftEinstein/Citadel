@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.function.Function;
 
 public abstract class BasicEntityModel<T extends Entity> extends EntityModel<T> {
+
     public int textureWidth = 64;
     public int textureHeight = 32;
 
@@ -20,7 +21,6 @@ public abstract class BasicEntityModel<T extends Entity> extends EntityModel<T> 
     protected BasicEntityModel(Function<ResourceLocation, RenderType> p_102613_) {
         super(p_102613_);
     }
-
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLightIn, int packedOverlayIn, int color) {

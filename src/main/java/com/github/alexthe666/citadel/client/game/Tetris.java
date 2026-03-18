@@ -2,7 +2,6 @@ package com.github.alexthe666.citadel.client.game;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,17 +9,13 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -63,10 +58,12 @@ public class Tetris {
             if (fallingShape == null) {
                 generateTetromino();
                 generateNextTetromino();
-            } else if (groundedTetromino()) {
+            }
+            else if (groundedTetromino()) {
                 groundTetromino();
                 fallingShape = null;
-            } else {
+            }
+            else {
                 float f = 0.15F;
                 if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_DOWN)) {
                     f = 1F;
@@ -106,11 +103,14 @@ public class Tetris {
                 }
                 if (cleared == 1) {
                     score += 40;
-                } else if (cleared == 2) {
+                }
+                else if (cleared == 2) {
                     score += 100;
-                } else if (cleared == 3) {
+                }
+                else if (cleared == 3) {
                     score += 300;
-                } else if (cleared >= 4) {
+                }
+                else if (cleared >= 4) {
                     score += 1200 * (cleared - 3);
                 }
             }
@@ -202,14 +202,16 @@ public class Tetris {
     private void generateNextTetromino() {
         BlockState randomState = Blocks.DIRT.defaultBlockState();
         for (int tries = 0; tries < 5; tries++) {
-            try{
-                BlockState block = BuiltInRegistries.BLOCK.getAny().get().getDelegate().value().defaultBlockState();
-                BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
-                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
-                    randomState = block;
-                    break;
-                }
-            }catch (Exception ignored){
+            try {
+                // TODO
+//                BlockState block = BuiltInRegistries.BLOCK.getAny().get().getDelegate().value().defaultBlockState();
+//                BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
+//                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
+//                    randomState = block;
+//                    break;
+//                }
+            }
+            catch (Exception ignored) {
             }
         }
         nextShape = TetrominoShape.getRandom(random);
@@ -253,15 +255,16 @@ public class Tetris {
         }
     }
 
+    // TODO
     private void renderBlockState(BlockState state, float offsetX, float offsetY, float size) {
-        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon(ModelData.EMPTY);
-        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        float f = size * 0.5F;
-        bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV1());
-        bufferbuilder.addVertex(f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV1());
-        bufferbuilder.addVertex(f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV0());
-        bufferbuilder.addVertex(-f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV0());
-        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+//        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon(ModelData.EMPTY);
+//        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+//        float f = size * 0.5F;
+//        bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV1());
+//        bufferbuilder.addVertex(f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV1());
+//        bufferbuilder.addVertex(f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU1(), sprite.getV0());
+//        bufferbuilder.addVertex(-f + offsetX, -f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV0());
+//        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
     public void render(TitleScreen screen, GuiGraphics guiGraphics, float partialTick) {
@@ -269,8 +272,8 @@ public class Tetris {
         float offsetX = screen.width / 2F - scale * 5F;
         float offsetY = scale * 0.5F;
         if (started) {
-            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F),  -1873784752);
-            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F),  -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F), -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F), -1873784752);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
@@ -306,7 +309,7 @@ public class Tetris {
             guiGraphics.drawString(Minecraft.getInstance().font, "[DOWN ARROW] quick drop", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 30, rainbow);
             guiGraphics.drawString(Minecraft.getInstance().font, "[T] start over", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 50, rainbow);
             guiGraphics.drawString(Minecraft.getInstance().font, "Happy april fools from Citadel", 5, 5, rainbow);
-            if(gameOver){
+            if (gameOver) {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate((int) (screen.width * 0.5F), (int) (screen.height * 0.5F), 150);
                 guiGraphics.pose().scale(3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F);

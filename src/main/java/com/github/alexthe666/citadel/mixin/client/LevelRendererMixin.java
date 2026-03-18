@@ -2,7 +2,6 @@ package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.CitadelConstants;
-import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -13,8 +12,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -78,13 +75,15 @@ public class LevelRendererMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getTeamColor()I")
     )
     private int citadel_getTeamColor(Entity entity) {
-        EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
-        NeoForge.EVENT_BUS.post(event);
-        int color = entity.getTeamColor();
-        if (event.getResult() == TriState.TRUE) {
-            color = event.getColor();
-        }
-        return color;
+        // TODO ender
+//        EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
+//        NeoForge.EVENT_BUS.post(event);
+//        int color = entity.getTeamColor();
+//        if (event.getResult() == TriState.TRUE) {
+//            color = event.getColor();
+//        }
+//        return color;
+        return 0;
     }
 
     @Redirect(

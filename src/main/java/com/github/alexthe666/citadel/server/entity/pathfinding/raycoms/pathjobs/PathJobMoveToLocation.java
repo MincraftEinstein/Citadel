@@ -11,13 +11,13 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Path;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Job that handles moving to a location.
  */
 public class PathJobMoveToLocation extends AbstractPathJob {
+
     private static final float DESTINATION_SLACK_NONE = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     private static final float DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
@@ -81,8 +81,8 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     protected boolean isAtDestination(final MNode n) {
         if (destinationSlack <= DESTINATION_SLACK_NONE) {
             return n.pos.getX() == destination.getX()
-                && n.pos.getY() == destination.getY()
-                && n.pos.getZ() == destination.getZ();
+                    && n.pos.getY() == destination.getY()
+                    && n.pos.getZ() == destination.getZ();
         }
 
         if (n.pos.getY() == destination.getY() - 1) {

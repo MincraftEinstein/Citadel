@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
-import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -10,9 +9,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.NeoForge;
 
 public class ServerProxy {
+
     public ServerProxy() {
     }
 
@@ -57,15 +56,17 @@ public class ServerProxy {
             ServerTickRateTracker tracker = ServerTickRateTracker.getForServer(((ServerLevel) level).getServer());
             if (tracker.isTickingHandled(entity)) {
                 return false;
-            } else if (!tracker.hasNormalTickRate(entity)) {
-                EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-                NeoForge.EVENT_BUS.post(event);
-                if (event.isCanceled()) {
-                    return true;
-                } else {
-                    tracker.addTickBlockedEntity(entity);
-                    return false;
-                }
+            }
+            else if (!tracker.hasNormalTickRate(entity)) {
+                // TODO ender
+//                EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
+//                NeoForge.EVENT_BUS.post(event);
+//                if (event.isCanceled()) {
+//                    return true;
+//                } else {
+                tracker.addTickBlockedEntity(entity);
+//                    return false;
+//                }
             }
         }
         return true;

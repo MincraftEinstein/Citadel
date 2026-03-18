@@ -6,8 +6,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +68,7 @@ public class SpawnBiomeData {
     }
 
     private static class SpawnBiomeEntry {
+
         BiomeEntryType type;
         boolean negate;
         String value;
@@ -79,16 +80,18 @@ public class SpawnBiomeData {
         }
 
         public boolean matches(@Nullable Holder<Biome> biomeHolder, ResourceLocation registryName) {
-            if(type.isDepreciated()){
+            if (type.isDepreciated()) {
                 Citadel.LOGGER.warn("biome config: BIOME_DICT and BIOME_CATEGORY are no longer valid in 1.19+. Please use BIOME_TAG instead.");
                 return false;
-            }else{
-                if(type == BiomeEntryType.BIOME_TAG){
-                    if(biomeHolder.tags().anyMatch(biomeTagKey -> biomeTagKey.location().toString().equals(value))){
+            }
+            else {
+                if (type == BiomeEntryType.BIOME_TAG) {
+                    if (biomeHolder.tags().anyMatch(biomeTagKey -> biomeTagKey.location().toString().equals(value))) {
                         return !negate;
                     }
                     return negate;
-                } else {
+                }
+                else {
                     if (registryName.toString().equals(value)) {
                         return !negate;
                     }

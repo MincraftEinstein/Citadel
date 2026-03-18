@@ -13,10 +13,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.*;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape> {
+
     private final AABB box;
     private final CollisionContext context;
     private final Cursor3D cursor;
@@ -55,7 +55,8 @@ public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape
         long k = ChunkPos.asLong(i, j);
         if (this.cachedBlockGetter != null && this.cachedBlockGetterPos == k) {
             return this.cachedBlockGetter;
-        } else {
+        }
+        else {
             BlockGetter blockgetter = this.collisionGetter.getChunkForCollisions(i, j);
             this.cachedBlockGetter = blockgetter;
             this.cachedBlockGetterPos = k;
@@ -87,10 +88,10 @@ public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape
                 }
 
                 VoxelShape voxelshape = blockstate.getCollisionShape(this.collisionGetter, this.pos, this.context);
-                if(context instanceof EntityCollisionContext){
-                    Entity entity = ((EntityCollisionContext)context).getEntity();
-                    if(entity instanceof ICustomCollisions){
-                        if(((ICustomCollisions) entity).canPassThrough(pos, blockstate, voxelshape)){
+                if (context instanceof EntityCollisionContext) {
+                    Entity entity = ((EntityCollisionContext) context).getEntity();
+                    if (entity instanceof ICustomCollisions) {
+                        if (((ICustomCollisions) entity).canPassThrough(pos, blockstate, voxelshape)) {
                             continue;
                         }
                     }

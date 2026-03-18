@@ -1,8 +1,8 @@
 package com.github.alexthe666.citadel.client.video;
 
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLPaths;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,15 +65,16 @@ public class Video {
     public void update() {
 
         if (frameGrabber != null) {
-            if(prevFrameGrabber == null){
+            if (prevFrameGrabber == null) {
                 onStart();
             }
             long milliseconds = System.currentTimeMillis() - startTime;
             int frame = (int) (milliseconds / 1000D * framesPerSecond);
             pausedAudioTime = milliseconds * 1000;
-            if(lastFrame == frame || this.paused){
+            if (lastFrame == frame || this.paused) {
                 return;
-            }else{
+            }
+            else {
                 lastFrame = frame;
             }
             try {
@@ -81,15 +82,17 @@ public class Video {
                 if (picture != null) {
                     BufferedImage bufferedImage = toBufferedImage(picture);
                     texture.setPixelsFromBufferedImage(bufferedImage);
-                } else if(repeat){
+                }
+                else if (repeat) {
                     frameGrabber.seekToFramePrecise(0);
-                    if(audioClip != null && !this.muted){
+                    if (audioClip != null && !this.muted) {
                         audioClip.loop(-1);
                         audioClip.setFramePosition(0);
                     }
                     startTime = System.currentTimeMillis();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -97,7 +100,7 @@ public class Video {
         prevFrameGrabber = frameGrabber;
     }
 
-    public void onStart(){
+    public void onStart() {
         startTime = System.currentTimeMillis();
     }
 
@@ -112,10 +115,11 @@ public class Video {
                 mp4FileOnDisk = path.toFile();
                 frameGrabber = FrameGrab.createFrameGrab(NIOUtils.readableChannel(mp4FileOnDisk));
                 LOGGER.info("loaded mp4 video from {}", url);
-                if(!this.muted){
+                if (!this.muted) {
                     setupAudio(mp4FileOnDisk, 0);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -132,11 +136,12 @@ public class Video {
 
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
-            if(!hasAudioLoaded){
+            if (!hasAudioLoaded) {
                 LOGGER.info("loaded mp4 audio from {}", url);
             }
             hasAudioLoaded = true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -147,13 +152,14 @@ public class Video {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
-        if(audioClip != null && hasAudioLoaded){
-            if(paused || this.muted){
-                if(audioClip.isOpen()){
+        if (audioClip != null && hasAudioLoaded) {
+            if (paused || this.muted) {
+                if (audioClip.isOpen()) {
                     audioClip.close();
                 }
-            }else{
-                if(!audioClip.isOpen()){
+            }
+            else {
+                if (!audioClip.isOpen()) {
                     setupAudio(mp4FileOnDisk, pausedAudioTime);
                 }
             }
@@ -197,12 +203,13 @@ public class Video {
     }
 
     private static Path getVideoCacheFolder() {
-        Path configPath = FMLPaths.GAMEDIR.get();
+        Path configPath = FabricLoader.getInstance().getGameDir();
         Path jsonPath = Paths.get(configPath.toAbsolutePath().toString(), "citadel/video_cache");
         if (!Files.exists(jsonPath)) {
             try {
                 IOUtils.forceMkdir(jsonPath.toFile());
-            } catch (Exception ignored) {
+            }
+            catch (Exception ignored) {
             }
         }
         return jsonPath;
@@ -213,7 +220,8 @@ public class Video {
             Picture bgr = Picture.createCropped(src.getWidth(), src.getHeight(), ColorSpace.BGR, src.getCrop());
             if (src.getColor() == ColorSpace.RGB) {
                 new RgbToBgr().transform(src, bgr);
-            } else {
+            }
+            else {
                 Transform transform = ColorUtil.getTransform(src.getColor(), ColorSpace.RGB);
                 transform.transform(src, bgr);
                 new RgbToBgr().transform(bgr, bgr);
@@ -223,10 +231,12 @@ public class Video {
         BufferedImage dst = new BufferedImage(src.getCroppedWidth(), src.getCroppedHeight(),
                 BufferedImage.TYPE_3BYTE_BGR);
 
-        if (src.getCrop() == null)
+        if (src.getCrop() == null) {
             toBufferedImage2(src, dst);
-        else
+        }
+        else {
             toBufferedImageCropped(src, dst);
+        }
 
         return dst;
     }

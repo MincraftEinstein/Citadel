@@ -3,7 +3,6 @@ package com.github.alexthe666.citadel.client.gui;
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
-import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,11 +19,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
-
-import javax.annotation.Nullable;
 
 public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
@@ -110,12 +107,14 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
             if (capeType == null) {
                 tag.putString("CitadelCapeType", "");
                 tag.putBoolean("CitadelCapeDisabled", true);
-            } else {
+            }
+            else {
                 tag.putString("CitadelCapeType", capeType);
                 tag.putBoolean("CitadelCapeDisabled", false);
             }
             CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-            PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
+            // TODO ender
+//            PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(button);
@@ -132,12 +131,14 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
         if (capeType == null) {
             suffix = Component.translatable("citadel.gui.no_cape");
-        } else {
+        }
+        else {
 
             CitadelCapes.Cape cape = CitadelCapes.getById(capeType);
             if (cape == null) {
                 suffix = Component.translatable("citadel.gui.no_cape");
-            } else {
+            }
+            else {
                 suffix = Component.translatable("cape." + cape.getIdentifier());
             }
         }

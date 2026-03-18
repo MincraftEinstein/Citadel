@@ -18,13 +18,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CitadelLecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
+
     private ItemStack book = ItemStack.EMPTY;
 
     private final Container bookAccess = new Container() {
+
         public int getContainerSize() {
             return 1;
         }
@@ -45,7 +46,8 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
                 }
 
                 return itemstack;
-            } else {
+            }
+            else {
                 return ItemStack.EMPTY;
             }
         }
@@ -56,7 +58,8 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
                 CitadelLecternBlockEntity.this.book = ItemStack.EMPTY;
                 CitadelLecternBlockEntity.this.onBookItemRemove();
                 return itemstack;
-            } else {
+            }
+            else {
                 return ItemStack.EMPTY;
             }
         }
@@ -75,7 +78,8 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         public boolean stillValid(Player p_59588_) {
             if (CitadelLecternBlockEntity.this.level.getBlockEntity(CitadelLecternBlockEntity.this.worldPosition) != CitadelLecternBlockEntity.this) {
                 return false;
-            } else {
+            }
+            else {
                 return p_59588_.distanceToSqr((double) CitadelLecternBlockEntity.this.worldPosition.getX() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getY() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getZ() + 0.5D) > 64.0D ? false : CitadelLecternBlockEntity.this.hasBook();
             }
         }
@@ -89,6 +93,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
     };
     //dummy container for page turning
     private final ContainerData dataAccess = new ContainerData() {
+
         public int get(int i) {
             return 0;
         }
@@ -135,7 +140,8 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         super.loadAdditional(tag, registries);
         if (tag.contains("Book", 10)) {
             this.book = ItemStack.parse(registries, tag.getCompound("Book")).orElse(ItemStack.EMPTY);
-        } else {
+        }
+        else {
             this.book = ItemStack.EMPTY;
         }
     }

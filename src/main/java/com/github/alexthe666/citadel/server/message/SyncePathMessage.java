@@ -1,13 +1,11 @@
 package com.github.alexthe666.citadel.server.message;
 
 
-import com.github.alexthe666.citadel.client.render.pathfinding.PathfindingDebugRenderer;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.MNode;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +13,7 @@ import java.util.Set;
 /**
  * Message to sync some path over to the client.
  */
-public class SyncePathMessage implements CustomPacketPayload{
+public class SyncePathMessage implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncePathMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "sync_path"));
     public static final StreamCodec<FriendlyByteBuf, SyncePathMessage> CODEC = StreamCodec.ofMember(SyncePathMessage::write, SyncePathMessage::read);
@@ -90,13 +88,14 @@ public class SyncePathMessage implements CustomPacketPayload{
         return TYPE;
     }
 
-    public static void handle(final SyncePathMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.flow().isClientbound()) {
-                PathfindingDebugRenderer.lastDebugNodesVisited = message.lastDebugNodesVisited;
-                PathfindingDebugRenderer.lastDebugNodesNotVisited = message.lastDebugNodesNotVisited;
-                PathfindingDebugRenderer.lastDebugNodesPath = message.lastDebugNodesPath;
-            }
-        });
-    }
+    // TODO ender. might not be needed
+//    public static void handle(final SyncePathMessage message, IPayloadContext context) {
+//        context.enqueueWork(() -> {
+//            if (context.flow().isClientbound()) {
+//                PathfindingDebugRenderer.lastDebugNodesVisited = message.lastDebugNodesVisited;
+//                PathfindingDebugRenderer.lastDebugNodesNotVisited = message.lastDebugNodesNotVisited;
+//                PathfindingDebugRenderer.lastDebugNodesPath = message.lastDebugNodesPath;
+//            }
+//        });
+//    }
 }

@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.CitadelConstants;
-import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,8 +11,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -32,11 +29,12 @@ public abstract class ClientLevelMixin extends Level {
 
     @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "getStarBrightness", cancellable = true)
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
-        EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.getResult() == TriState.TRUE) {
-            cir.setReturnValue(event.getBrightness());
-        }
+        // TODO ender
+//        EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
+//        NeoForge.EVENT_BUS.post(event);
+//        if (event.getResult() == TriState.TRUE) {
+//            cir.setReturnValue(event.getBrightness());
+//        }
     }
 
     @ModifyConstant(

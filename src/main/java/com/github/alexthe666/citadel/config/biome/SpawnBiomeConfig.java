@@ -4,8 +4,8 @@ import com.github.alexthe666.citadel.Citadel;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -15,13 +15,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SpawnBiomeConfig {
+
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(SpawnBiomeData.class, new SpawnBiomeData.Deserializer()).create();
     private final ResourceLocation fileName;
 
     private SpawnBiomeConfig(ResourceLocation fileName) {
         if (!fileName.getNamespace().endsWith(".json")) {
             this.fileName = ResourceLocation.fromNamespaceAndPath(fileName.getNamespace(), fileName.getPath() + ".json");
-        } else {
+        }
+        else {
             this.fileName = fileName;
         }
 
@@ -37,13 +39,15 @@ public class SpawnBiomeConfig {
         if (!configFile.exists()) {
             try {
                 FileUtils.write(configFile, GSON.toJson(defaults));
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 Citadel.LOGGER.error("Spawn Biome Config: Could not write {}", configFile, e);
             }
         }
         try {
             return GSON.fromJson(FileUtils.readFileToString(configFile), type);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Citadel.LOGGER.error("Spawn Biome Config: Could not load {}", configFile, e);
         }
 
@@ -51,7 +55,7 @@ public class SpawnBiomeConfig {
     }
 
     private File getConfigDirFile() {
-        Path configPath = FMLPaths.CONFIGDIR.get();
+        Path configPath = FabricLoader.getInstance().getGameDir();
         Path jsonPath = Paths.get(configPath.toAbsolutePath().toString(), fileName.getNamespace());
         return jsonPath.toFile();
     }

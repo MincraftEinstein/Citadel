@@ -31,7 +31,8 @@ public class LinkButton extends Button {
         this(book, x, y, width, height, component, ItemStack.EMPTY, onPress);
     }
 
-    @Override
+    // TODO this is supposed to override a neo only method in AbstractWidget
+//    @Override
     public int getFGColor() {
         return this.isHovered ? book.getWidgetColor() : this.active ? 0X94745A : 10526880;
     }
@@ -77,7 +78,6 @@ public class LinkButton extends Button {
         int j = getFGColor();
         int itemTextOffset = previewStack.isEmpty() ? 0 : 8;
         if(!previewStack.isEmpty()){
-            ItemRenderer itemRenderer =  Minecraft.getInstance().getItemRenderer();
             guiGraphics.renderItem(previewStack, this.getX() + 2, this.getY() + 1);
         }
         drawTextOf(guiGraphics, font, this.getMessage(), this.getX() + itemTextOffset + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
@@ -85,12 +85,11 @@ public class LinkButton extends Button {
 
     public static void drawTextOf(GuiGraphics guiGraphics, Font font, Component component, int x, int y, int color) {
         FormattedCharSequence formattedcharsequence = component.getVisualOrderText();
-        guiGraphics.drawString(font, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color, false);
+        guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, false);
     }
 
     @Override
     public void playDownSound(SoundManager soundManager) {
         soundManager.play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
     }
-
 }
