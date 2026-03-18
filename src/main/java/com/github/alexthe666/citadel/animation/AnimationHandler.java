@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.animation;
 
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.ArrayUtils;

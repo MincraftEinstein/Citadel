@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import net.minecraft.client.Minecraft;

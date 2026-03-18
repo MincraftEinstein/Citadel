@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.server.tick;
 
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifierType;

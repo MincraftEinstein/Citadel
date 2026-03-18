@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.platform.Lighting;

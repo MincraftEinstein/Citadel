@@ -4,7 +4,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs
  */
 
 import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.*;
 import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
 import com.github.alexthe666.citadel.server.message.SyncePathMessage;

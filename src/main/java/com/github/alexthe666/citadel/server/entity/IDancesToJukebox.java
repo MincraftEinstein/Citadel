@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.server.entity;
 
-import com.github.alexthe666.citadel.refabrciated.client.PacketDistributor;
+import com.github.alexthe666.citadel.refabrciated.PacketDistributor;
 import com.github.alexthe666.citadel.server.message.DanceJukeboxMessage;
 import net.minecraft.core.BlockPos;
 

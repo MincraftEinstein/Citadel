@@ -1,4 +1,4 @@
-package com.github.alexthe666.citadel.refabrciated.client;
+package com.github.alexthe666.citadel.refabrciated;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
