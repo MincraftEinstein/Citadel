@@ -1,9 +1,6 @@
 package com.github.alexthe666.citadel.refabrciated.client.event;
 
-import com.github.alexthe666.citadel.client.event.EventGetFluidRenderType;
-import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
-import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
-import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
+import com.github.alexthe666.citadel.client.event.*;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.util.TriState;
@@ -56,5 +53,30 @@ public interface CitadelClientEvents {
     @FunctionalInterface
     interface GetFluidRenderType {
         void event(EventGetFluidRenderType event);
+    }
+
+    interface RenderSplashText {
+        Event<RenderSplashTextPre> PRE = EventFactory.createArrayBacked(RenderSplashTextPre.class, callbacks -> event -> {
+            for (var callback : callbacks) {
+                callback.event(event);
+                if (event.getResult() == TriState.TRUE) return;
+            }
+        });
+
+        @FunctionalInterface
+        interface RenderSplashTextPre {
+            void event(EventRenderSplashText.Pre event);
+        }
+
+        Event<RenderSplashTextPost> POST = EventFactory.createArrayBacked(RenderSplashTextPost.class, callbacks -> event -> {
+            for (var callback : callbacks) {
+                callback.event(event);
+            }
+        });
+
+        @FunctionalInterface
+        interface RenderSplashTextPost {
+            void event(EventRenderSplashText.Post event);
+        }
     }
 }
