@@ -2,7 +2,10 @@ package com.github.alexthe666.citadel.mixin.client;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.CitadelConstants;
+import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
+import com.github.alexthe666.citadel.refabrciated.client.event.CitadelClientEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -75,15 +78,13 @@ public class LevelRendererMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getTeamColor()I")
     )
     private int citadel_getTeamColor(Entity entity) {
-        // TODO ender
-//        EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
-//        NeoForge.EVENT_BUS.post(event);
-//        int color = entity.getTeamColor();
-//        if (event.getResult() == TriState.TRUE) {
-//            color = event.getColor();
-//        }
-//        return color;
-        return 0;
+        EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
+        CitadelClientEvents.OUTLINE_COLOR.invoker().event(event);
+        int color = entity.getTeamColor();
+        if (event.getResult() == TriState.TRUE) {
+            color = event.getColor();
+        }
+        return color;
     }
 
     @Redirect(

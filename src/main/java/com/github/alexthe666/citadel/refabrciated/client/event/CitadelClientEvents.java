@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.refabrciated.client.event;
 
+import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.event.EventGetStarBrightness;
 import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
 import net.fabricmc.fabric.api.event.Event;
@@ -8,7 +9,7 @@ import net.fabricmc.fabric.api.util.TriState;
 
 public interface CitadelClientEvents {
     Event<StarBrightness> STAR_BRIGHTNESS = EventFactory.createArrayBacked(StarBrightness.class, callbacks -> event -> {
-        for (StarBrightness callback : callbacks) {
+        for (var callback : callbacks) {
             callback.event(event);
             if (event.getResult() == TriState.TRUE) return;
         }
@@ -21,7 +22,7 @@ public interface CitadelClientEvents {
 
 
     Event<PosePlayerHand> POSE_PLAYER_HAND = EventFactory.createArrayBacked(PosePlayerHand.class, callbacks -> event -> {
-        for (PosePlayerHand callback : callbacks) {
+        for (var callback : callbacks) {
             callback.event(event);
             if (event.getResult() == TriState.TRUE) return;
         }
@@ -31,5 +32,15 @@ public interface CitadelClientEvents {
     interface PosePlayerHand {
         void event(EventPosePlayerHand event);
     }
+    Event<GetOutlineColor> OUTLINE_COLOR = EventFactory.createArrayBacked(GetOutlineColor.class, callbacks -> event -> {
+        for (var callback : callbacks) {
+            callback.event(event);
+            if (event.getResult() == TriState.TRUE) return;
+        }
+    });
 
+    @FunctionalInterface
+    interface GetOutlineColor {
+        void event(EventGetOutlineColor event);
+    }
 }
