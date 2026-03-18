@@ -14,6 +14,7 @@ import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
+import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.mixin.refabricated.ScreenAccessor;
 import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
@@ -26,12 +27,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.BackupConfirmScreen;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.options.SkinCustomizationScreen;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -83,6 +87,7 @@ public class ClientProxy extends ServerProxy {
             }
 
             screenOpen(minecraft, screen);
+            onOpenGui(screen);
         });
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> clientTick());
     }
@@ -141,38 +146,35 @@ public class ClientProxy extends ServerProxy {
 //        }
 //    }
 
-    // TODO ender
-//    @SubscribeEvent
+    // Fix if need debug
 //    public void renderWorldLastEvent(RenderLevelStageEvent event) {
 //        if (Pathfinding.isDebug()) {
 //            WorldEventContext.INSTANCE.renderWorldLastEvent(event);
 //        }
 //    }
 
-    // TODO ender
-//    @SubscribeEvent
-//    public void onOpenGui(ScreenEvent.Opening event) {
-//        if (ServerConfig.skipWarnings) {
-//            try {
-//                if (event.getScreen() instanceof BackupConfirmScreen confirmBackupScreen) {
-//                    MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
-//
-//                    if (confirmBackupScreen.getTitle().equals(title)) {
-//                        confirmBackupScreen.onProceed.proceed(false, true);
-//                    }
-//                }
-//                if (event.getScreen() instanceof ConfirmScreen confirmScreen) {
-//                    MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
-//                    if (confirmScreen.getTitle().equals(title)) {
-//                        confirmScreen.callback.accept(true);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                Citadel.LOGGER.warn("Citadel couldn't skip world loadings");
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    public void onOpenGui(Screen screen) {
+        if (ServerConfig.skipWarnings) {
+            try {
+                if (screen instanceof BackupConfirmScreen confirmBackupScreen) {
+                    MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
+
+                    if (confirmBackupScreen.getTitle().equals(title)) {
+                        confirmBackupScreen.onProceed.proceed(false, true);
+                    }
+                }
+                if (screen instanceof ConfirmScreen confirmScreen) {
+                    MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
+                    if (confirmScreen.getTitle().equals(title)) {
+                        confirmScreen.callback.accept(true);
+                    }
+                }
+            } catch (Exception e) {
+                Citadel.LOGGER.warn("Citadel couldn't skip world loadings");
+                Citadel.LOGGER.warn(e);
+            }
+        }
+    }
 
     // TODO ender
 //    @SubscribeEvent
