@@ -78,6 +78,11 @@ loom {
     mixin {
         defaultRefmapName.set("${mod_id}.refmap.json")
     }
+    runs {
+        "client" {
+            programArgs("--username", "Dev")
+        }
+    }
 }
 
 configurations {
