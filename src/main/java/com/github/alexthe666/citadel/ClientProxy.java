@@ -26,6 +26,7 @@ import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
@@ -99,6 +100,7 @@ public class ClientProxy extends ServerProxy {
         RenderSplashTextEvents.PRE.register(this::renderSplashTextBefore);
         ScreenEventKeyPressed.PRE.register(this::onKeyPressed);
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> clientTick());
+        ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> renderTooltipColor(stack));
     }
 
     public void screenOpen(Minecraft minecraft, Screen screen) {
@@ -254,15 +256,13 @@ public class ClientProxy extends ServerProxy {
         lastHoveredItem = null;
     }
 
-    // TODO ender
-//    @SubscribeEvent
-//    public void renderTooltipColor(RenderTooltipEvent.Color event) {
-//        if (event.getItemStack().getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(event.getItemStack())) {
-//            lastHoveredItem = event.getItemStack();
-//        } else {
-//            lastHoveredItem = null;
-//        }
-//    }
+    public void renderTooltipColor(ItemStack stack) {
+        if (stack.getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(stack)) {
+            lastHoveredItem = stack;
+        } else {
+            lastHoveredItem = null;
+        }
+    }
 
     @Override
     public float getMouseOverProgress(ItemStack itemStack) {
