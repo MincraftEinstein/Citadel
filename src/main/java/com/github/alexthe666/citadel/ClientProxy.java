@@ -24,6 +24,7 @@ import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -39,6 +40,8 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.options.SkinCustomizationScreen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -47,6 +50,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -133,29 +137,27 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    // TODO
-//    @SubscribeEvent(priority = EventPriority.LOWEST)
-//    public void playerRender(RenderPlayerEvent.Pre event) {
-//        PoseStack matrixStackIn = event.getPoseStack();
-//        String username = event.getEntity().getName().getString();
-//        if (!event.getEntity().isModelPartShown(PlayerModelPart.CAPE) || event.isCanceled() || event.getEntity().isSpectator()) {
-//            return;
-//        }
-//
-//        if (Citadel.PATREONS.contains(username)) {
-//            CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
-//            String rendererName = tag.contains("CitadelFollowerType") ? tag.getString("CitadelFollowerType") : "citadel";
-//            if (!rendererName.equals("none") && !hideFollower) {
-//                CitadelPatreonRenderer renderer = CitadelPatreonRenderer.get(rendererName);
-//                if (renderer != null) {
-//                    float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;
-//                    float speed = tag.contains("CitadelRotateSpeed") ? tag.getFloat("CitadelRotateSpeed") : 1F;
-//                    float height = tag.contains("CitadelRotateHeight") ? tag.getFloat("CitadelRotateHeight") : 1F;
-//                    renderer.render(matrixStackIn, event.getMultiBufferSource(), event.getPackedLight(), event.getPartialTick(), event.getEntity(), distance, speed, height);
-//                }
-//            }
-//        }
-//    }
+    public static void playerRender(Player entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource multiBufferSource, int packedLight, float partialTick) {
+        String username = entity.getName().getString();
+        if (!entity.isModelPartShown(PlayerModelPart.CAPE) || entity.isSpectator()) {
+            return;
+        }
+
+        if (Citadel.PATREONS.contains(username)) {
+            CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
+            String rendererName = tag.contains("CitadelFollowerType") ? tag.getString("CitadelFollowerType") : "citadel";
+            if (!rendererName.equals("none") && !hideFollower) {
+                CitadelPatreonRenderer renderer = CitadelPatreonRenderer.get(rendererName);
+                if (renderer != null) {
+                    float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;
+                    float speed = tag.contains("CitadelRotateSpeed") ? tag.getFloat("CitadelRotateSpeed") : 1F;
+                    float height = tag.contains("CitadelRotateHeight") ? tag.getFloat("CitadelRotateHeight") : 1F;
+
+                    renderer.render(matrixStackIn, multiBufferSource, packedLight, partialTick, entity, distance, speed, height);
+                }
+            }
+        }
+    }
 
     // Fix if need debug
 //    public void renderWorldLastEvent(RenderLevelStageEvent event) {

@@ -27,7 +27,8 @@
     "client.SplashRendererMixin",
     "refabricated.BlockEntityWithoutLevelRendererMixin",
     "refabricated.ItemRendererAccessor",
-    "refabricated.KeyboardHandlerMixin"
+    "refabricated.KeyboardHandlerMixin",
+    "refabricated.PlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
