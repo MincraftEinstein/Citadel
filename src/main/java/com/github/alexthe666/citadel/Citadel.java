@@ -17,6 +17,9 @@ import com.github.alexthe666.citadel.web.WebHelper;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -27,6 +30,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -67,12 +71,6 @@ public class Citadel implements ModInitializer {
 
     public static final Supplier<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = registerBlockEntity("lectern", BlockEntityType.Builder.of(CitadelLecternBlockEntity::new, LECTERN.get()).build(null));
 
-    // TODO ender
-//    public Citadel(ModContainer modContainer, IEventBus bus) {
-//        final DeferredRegister<MapCodec<? extends BiomeModifier>> serializers = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, "citadel");
-//        serializers.register(bus);
-//        serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
-//    }
 
     @Override
     public void onInitialize() {
@@ -84,6 +82,11 @@ public class Citadel implements ModInitializer {
             ServerGetter.setServer(server);
         });
         registerPayloads();
+        var id = ResourceLocation.fromNamespaceAndPath(MOD_ID, "mob_spawn_probability");
+        BiomeModifications.create(id).add(ModificationPhase.POST_PROCESSING, BiomeSelectors.all(), (biomeCtx, modCtx) -> {
+            float probability = (float) (ServerConfig.chunkGenSpawnModifierVal) * biomeCtx.getBiome().getMobSettings().getCreatureProbability();
+            modCtx.getSpawnSettings().setCreatureSpawnProbability(Mth.clamp(probability, 0F, 1F));
+        });
 
         LecternBooks.init();
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
