@@ -11,10 +11,10 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "NoiseGeneratorSettingsMixin",
-    "refabricated.ScreenAccessor",
     "ServerLevelMixin",
     "SmithingMenuMixin",
-    "refabricated.ItemRendererAccessor"
+    "refabricated.ItemRendererAccessor",
+    "refabricated.ScreenAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -26,7 +26,8 @@
     "client.SoundEngineMixin",
     "client.SplashRendererMixin",
     "refabricated.BlockEntityWithoutLevelRendererMixin",
-    "refabricated.ItemRendererAccessor"
+    "refabricated.ItemRendererAccessor",
+    "refabricated.KeyboardHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

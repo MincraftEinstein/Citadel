@@ -19,9 +19,11 @@ import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.mixin.refabricated.ScreenAccessor;
 import com.github.alexthe666.citadel.refabrciated.client.event.RenderSplashTextEvents;
+import com.github.alexthe666.citadel.refabrciated.client.event.ScreenEventKeyPressed;
 import com.github.alexthe666.citadel.refabrciated.event.CitadelCommonEvents;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -95,6 +97,7 @@ public class ClientProxy extends ServerProxy {
             onOpenGui(screen);
         });
         RenderSplashTextEvents.PRE.register(this::renderSplashTextBefore);
+        ScreenEventKeyPressed.PRE.register(this::onKeyPressed);
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> clientTick());
     }
 
@@ -197,15 +200,13 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    // TODO ender
-//    @SubscribeEvent
-//    public void onKeyPressed(ScreenEvent.KeyPressed.Pre event) {
-//        if (Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
-//            if (event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP) {
-//                event.setCanceled(true);
-//            }
-//        }
-//    }
+    public void onKeyPressed(ScreenEventKeyPressed.Pre event) {
+        if (Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
+            if (event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP) {
+                event.setCanceled(true);
+            }
+        }
+    }
 
     public void clientTick() {
         if (!isGamePaused() && Minecraft.getInstance().isRunning() && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
