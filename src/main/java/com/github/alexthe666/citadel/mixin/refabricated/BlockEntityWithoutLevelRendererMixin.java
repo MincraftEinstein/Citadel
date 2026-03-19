@@ -1,11 +1,11 @@
 package com.github.alexthe666.citadel.mixin.refabricated;
 
-import com.github.alexthe666.citadel.refabrciated.client.IClientItemExtensions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

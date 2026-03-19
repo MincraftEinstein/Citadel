@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client;
 
-import com.github.alexthe666.citadel.refabrciated.client.IClientItemExtensions;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class CitadelItemRenderProperties implements IClientItemExtensions {
 

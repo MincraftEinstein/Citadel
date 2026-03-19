@@ -8,7 +8,7 @@ if (System.getenv('BUILD_NUMBER') != null) {
 }
 
 base {
-    archivesName = "${mod_id}-${minecraft_version}"
+    archivesName = "${mod_id}-${minecraft_version}-refabricated"
 }
 
 repositories {
