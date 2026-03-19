@@ -177,16 +177,39 @@ jar {
     }
 }
 
-/*publishing {
+var dotenvFile = new File("$projectDir/.env")
+if (dotenvFile.exists()) {
+    for (final line in dotenvFile.text.split("\n")) {
+        var arr = line.split("=")
+        if (arr.size() == 2) {
+            System.setProperty(arr[0], arr[1])
+        }
+    }
+    println("Loaded .env vars!")
+} else println("No .env file found! No variables to load")
+
+
+publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId base.archivesName.get()
+            groupId project.group
+            artifactId project.base.archivesName.get()
+            version project.version
             from components.java
         }
     }
+
     repositories {
         maven {
-            url "file://" + System.getenv("local_maven")
+            name "TeamVoided"
+            url "https://maven.teamvoided.org/releases"
+            credentials {
+                username System.getProperty('TeamVoidedUsername')
+                password System.getProperty('TeamVoidedPassword')
+            }
+            authentication {
+                create("basic", BasicAuthentication)
+            }
         }
     }
-}*/
+}

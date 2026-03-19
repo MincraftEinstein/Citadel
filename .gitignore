@@ -26,3 +26,5 @@ runs
 forge*changelog.txt
 
 .vscode
+
+.env
