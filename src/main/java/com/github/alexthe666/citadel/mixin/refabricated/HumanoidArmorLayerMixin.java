@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.mixin.refabricated;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,10 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class HumanoidArmorLayerMixin {
 
     @Inject(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ArmorMaterial;layers()Ljava/util/List;"))
-    void modifyModelToCustom(PoseStack poseStack, MultiBufferSource bufferSource, LivingEntity livingEntity, EquipmentSlot slot, int packedLight, HumanoidModel model, CallbackInfo ci, @Local ItemStack stack) {
+    void modifyModelToCustom(PoseStack poseStack, MultiBufferSource bufferSource, LivingEntity livingEntity, EquipmentSlot slot, int packedLight, HumanoidModel model, CallbackInfo ci, @Local ItemStack stack, @Local(argsOnly = true) LocalRef<HumanoidModel> modModel) {
         var ext = IClientItemExtensions.of(stack);
         if (ext != null) {
-            model = ext.getHumanoidArmorModel(livingEntity, stack, slot, model);
+            modModel.set((HumanoidModel) ext.getGenericArmorModel(livingEntity, stack, slot, model));
         }
     }
 
