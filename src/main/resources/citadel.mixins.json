@@ -26,6 +26,7 @@
     "client.SoundEngineMixin",
     "client.SplashRendererMixin",
     "refabricated.BlockEntityWithoutLevelRendererMixin",
+    "refabricated.HumanoidArmorLayerMixin",
     "refabricated.ItemRendererAccessor",
     "refabricated.KeyboardHandlerMixin",
     "refabricated.PlayerRendererMixin"
